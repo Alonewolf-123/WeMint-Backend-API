@@ -14,17 +14,19 @@ How to run!
     and set config in app/config/db.config.js
 
 - run
-
+    ```
     npm install
-
+    ```
     For development purpose you need to use below command to run.
 
+    ```
     npm run dev
-
+    ```
     For product
 
+    ```
     npm run start
-
+    ```
 - documentation
 
     Once you run, open below link to refer full api documentation
