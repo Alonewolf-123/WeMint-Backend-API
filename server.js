@@ -38,6 +38,15 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to wemint application." });
 });
 
+const swaggerUi = require('swagger-ui-express');
+swaggerDocument = require('./swagger.json');
+
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument)
+);
+
 // routes
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
@@ -58,7 +67,7 @@ function initial() {
           if (err) {
             console.log("error", err);
           }
-  
+
           console.log("added '" + role + "' to roles collection");
         });
       });
