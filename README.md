@@ -14,16 +14,15 @@ How to run!
     and set config in app/config/db.config.js
 
 - run
+    - To install dependency packages
     ```
     npm install
     ```
-    For development purpose you need to use below command to run.
-
+    - For development purpose you need to use below command to run.
     ```
     npm run dev
     ```
-    For product
-
+    - For product
     ```
     npm run start
     ```
