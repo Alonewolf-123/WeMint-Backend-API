@@ -1,166 +1,349 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "WeMint",
-        "version": "1.0.0"
+      "title": "WeMint",
+      "version": "1.0.0"
     },
     "servers": [
-        {
-            "url": "http://localhost:8080/api"
-        }
+      {
+        "url": "http://localhost:8080/api"
+      }
+    ],
+    "tags": [
+      {
+        "name": "Authentication"
+      },
+      {
+        "name": "User Management"
+      },
+      {
+        "name": "Category Management"
+      }
     ],
     "paths": {
-        "/auth/signup": {
-            "post": {
-                "tags": [
-                    "General"
-                ],
-                "summary": "signup",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "example": {
-                                    "firstName": "first",
-                                    "lastName": "next",
-                                    "email": "test@gmail.com",
-                                    "password": "test"
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "name": "Content-Type",
-                        "in": "header",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "application/json"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
+      "/auth/signup": {
+        "post": {
+          "tags": [
+            "Authentication"
+          ],
+          "summary": "signup",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "firstName": "firstName",
+                    "lastName": "lastName",
+                    "email": "test@gmail.com",
+                    "password": "test"
+                  }
                 }
+              }
             }
-        },
-        "/auth/signin": {
-            "post": {
-                "tags": [
-                    "General"
-                ],
-                "summary": "signin",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "example": {
-                                    "email": "test@gmail.com",
-                                    "password": "test"
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "name": "Content-Type",
-                        "in": "header",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "application/json"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
+          },
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
             }
-        },
-        "/auth/refreshtoken": {
-            "post": {
-                "tags": [
-                    "General"
-                ],
-                "summary": "refreshtoken",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "example": {
-                                    "refreshToken": "{{refreshToken}}"
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "name": "Content-Type",
-                        "in": "header",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "application/json"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
             }
-        },
-        "/admin/user/all": {
-            "get": {
-                "tags": [
-                    "General"
-                ],
-                "summary": "all users",
-                "parameters": [
-                    {
-                        "name": "Content-Type",
-                        "in": "header",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "application/json"
-                    },
-                    {
-                        "name": "x-access-token",
-                        "in": "header",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "{{accessToken}}"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            }
+          }
         }
+      },
+      "/auth/signin": {
+        "post": {
+          "tags": [
+            "Authentication"
+          ],
+          "summary": "signin",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "email": "test@gmail.com",
+                    "password": "test"
+                  }
+                }
+              }
+            }
+          },
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/auth/refreshtoken": {
+        "post": {
+          "tags": [
+            "Authentication"
+          ],
+          "summary": "refreshtoken",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "refreshToken": "{{refreshToken}}"
+                  }
+                }
+              }
+            }
+          },
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/admin/user/all": {
+        "get": {
+          "tags": [
+            "User Management"
+          ],
+          "summary": "Get All Users",
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
+            },
+            {
+              "name": "x-access-token",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "{{accessToken}}"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/admin/user/del": {
+        "post": {
+          "tags": [
+            "User Management"
+          ],
+          "summary": "Delete User",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "id": "sdf"
+                  }
+                }
+              }
+            }
+          },
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
+            },
+            {
+              "name": "x-access-token",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "{{accessToken}}"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/admin/categories/all": {
+        "get": {
+          "tags": [
+            "Category Management"
+          ],
+          "summary": "Get All Categories",
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
+            },
+            {
+              "name": "x-access-token",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "{{accessToken}}"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/admin/category/del": {
+        "post": {
+          "tags": [
+            "Category Management"
+          ],
+          "summary": "Delete Category",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "id": "aaaa"
+                  }
+                }
+              }
+            }
+          },
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
+            },
+            {
+              "name": "x-access-token",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "{{accessToken}}"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/admin/category/create": {
+        "post": {
+          "tags": [
+            "Category Management"
+          ],
+          "summary": "Create Category",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "userId": "6352b16e4b7957c118912c11"
+                  }
+                }
+              }
+            }
+          },
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "application/json"
+            },
+            {
+              "name": "x-access-token",
+              "in": "header",
+              "schema": {
+                "type": "string"
+              },
+              "example": "{{accessToken}}"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      }
     }
-}
+  }

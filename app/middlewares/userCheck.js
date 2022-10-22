@@ -1,5 +1,5 @@
 const utils = require("../utils/utils");
-const db = require("../models/user");
+const db = require("../models");
 const ROLES = db.ROLES;
 const User = db.user;
 
@@ -19,6 +19,31 @@ checkDuplicateEmail = (req, res, next) => {
     }
 
     next();
+  });
+};
+
+checkUserExist = (req, res, next) => {
+  // userId
+  User.findOne({
+    _id: req.body.id
+  }).exec((err, user) => {
+    if (err) {
+      res.status(404).send({ result: 0, message: "User Not found!" });
+      return;
+    }
+
+    if (user) {
+      if(user.deleted) {
+        res.status(400).send({
+          result: 0,
+          message: `User was deleted already!`
+        });
+        return;
+      }
+      next();
+      return;
+    }
+    res.status(404).send({ result: 0, message: "User Not found!" });
   });
 };
 
@@ -64,10 +89,11 @@ checkValidParams = (req, res, next) => {
   next();
 };
 
-const verifySignUp = {
+const userCheck = {
   checkDuplicateEmail,
   checkRolesExisted,
-  checkValidParams
+  checkValidParams,
+  checkUserExist
 };
 
-module.exports = verifySignUp;
+module.exports = userCheck;
