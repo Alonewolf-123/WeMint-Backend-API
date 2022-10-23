@@ -1,5 +1,5 @@
 const config = require("../config/auth.config");
-const db = require("../models/user");
+const db = require("../models");
 const { user: User, role: Role, refreshToken: RefreshToken } = db;
 
 const jwt = require("jsonwebtoken");

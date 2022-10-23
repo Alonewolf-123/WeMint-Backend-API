@@ -1,7 +1,11 @@
 const authJwt = require("./authJwt");
-const verifySignUp = require("./verifySignUp");
+const userCheck = require("./userCheck");
+const categoryCheck = require("./categoryCheck");
+const dataTypeCheck = require("./dataTypeCheck");
 
 module.exports = {
   authJwt,
-  verifySignUp
+  userCheck,
+  categoryCheck,
+  dataTypeCheck
 };
