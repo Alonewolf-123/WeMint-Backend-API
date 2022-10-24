@@ -7,7 +7,7 @@ dotenv.config();
 const app = express();
 
 let corsOptions = {
-  origin: [process.env.FRONT_ORIGIN]
+  origin: process.env.FRONT_ORIGIN.split(' ')
 };
 
 app.use(cors(corsOptions));
@@ -62,6 +62,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 require("./app/routes/category.routes")(app);
 require("./app/routes/dataType.routes")(app);
+require("./app/routes/attributes.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
