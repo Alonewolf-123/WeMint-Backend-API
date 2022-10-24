@@ -30,6 +30,6 @@ How to run!
 
     Once you run, open below link to refer full api documentation
 
-    http://localhost:8080/api-docs
+    http://localhost:4000/api-docs
 
     ![image](https://user-images.githubusercontent.com/31374816/197210202-605e8454-4ef1-46c4-83dd-fb82d67cae60.png)
