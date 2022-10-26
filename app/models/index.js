@@ -11,6 +11,7 @@ db.refreshToken = require("./user/refreshToken.model");
 db.category = require("./category/category.model");
 db.dataType = require("./dataType/dataType.model");
 db.attribute = require("./attribute/attribute.model");
+db.assetBank = require("./assetBank/assetBank.model");
 
 db.ROLES = ["user", "admin"];
 
