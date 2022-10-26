@@ -7,6 +7,10 @@ const AssetBank = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Attribute"
         },
+        categoryId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category"
+        },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
