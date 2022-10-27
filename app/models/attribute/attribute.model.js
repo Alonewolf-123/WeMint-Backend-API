@@ -5,14 +5,19 @@ const Attribute = mongoose.model(
     new mongoose.Schema({
         categoryId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Category"
+            ref: "Category",
+            required: true
         },
 
-        attribute: String,
+        attribute: {
+            type: String,
+            required: true
+        },
 
         dataTypeId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Role"
+            ref: "DataType",
+            required: true
         },
         deleted: {
             type: Boolean,

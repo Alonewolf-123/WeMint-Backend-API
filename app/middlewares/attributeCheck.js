@@ -33,7 +33,6 @@ checkAttributeExist = (req, res, next) => {
 checkValidParams = (req, res, next) => {
 
     const categoryId = req.body.categoryId;
-    const attribute = req.body.attribute;
     const dataTypeId = req.body.dataTypeId;
 
     let invalidMessage = "";
@@ -44,10 +43,6 @@ checkValidParams = (req, res, next) => {
     }).exec((err, cateogry) => {
         if (err || !cateogry) {
             invalidMessage = "Category Id is not valid!";
-        }
-
-        if (utils.isEmpty(attribute)) {
-            invalidMessage += utils.isEmpty(invalidMessage) ? "Attribute is not valid!" : "\n" + "Attribute is not valid!";
         }
 
         // dataTypeId

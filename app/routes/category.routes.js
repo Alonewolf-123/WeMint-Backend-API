@@ -6,9 +6,6 @@ module.exports = function (app) {
     app.post(
         "/api/admin/category/create",
         [authJwt.verifyToken, authJwt.isAdmin],
-        [
-            categoryCheck.checkValidParams
-        ],
         controller.createCategory
     );
 

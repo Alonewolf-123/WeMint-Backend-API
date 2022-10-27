@@ -28,27 +28,8 @@ checkCategoryExist = (req, res, next) => {
     });
 };
 
-checkValidParams = (req, res, next) => {
-    const name = req.body.name;
-    const description = req.body.description;
-    let invalidMessage = "";
-    if (utils.isEmpty(name)) {
-        invalidMessage = "Category Name is not valid!";
-    }
-    if (utils.isEmpty(description)) {
-        invalidMessage += utils.isEmpty(invalidMessage) ? "Category Description is not valid!" : "\n" + "Category Description is not valid!";
-    }
-    if (!utils.isEmpty(invalidMessage)) {
-        res.status(400).send({ result: 0, message: invalidMessage });
-        return;
-    }
-
-    next();
-};
-
 const categoryCheck = {
-    checkCategoryExist,
-    checkValidParams
+    checkCategoryExist
 };
 
 module.exports = categoryCheck;

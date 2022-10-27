@@ -6,9 +6,6 @@ module.exports = function (app) {
     app.post(
         "/api/admin/assetbank/create",
         [authJwt.verifyToken, authJwt.isAdmin],
-        [
-            assetBankCheck.checkValidParams
-        ],
         controller.createAssetBank
     );
 

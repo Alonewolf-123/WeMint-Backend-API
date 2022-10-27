@@ -6,9 +6,6 @@ module.exports = function (app) {
     app.post(
         "/api/admin/datatype/create",
         [authJwt.verifyToken, authJwt.isAdmin],
-        [
-            dataTypeCheck.checkValidParams
-        ],
         controller.createDataType
     );
 

@@ -28,31 +28,8 @@ checkDataTypeExist = (req, res, next) => {
     });
 };
 
-checkValidParams = (req, res, next) => {
-    const type = req.body.type;
-    const label = req.body.label;
-    const value = req.body.value;
-    let invalidMessage = "";
-    if (utils.isEmpty(type)) {
-        invalidMessage = "Type is not valid!";
-    }
-    if (utils.isEmpty(label)) {
-        invalidMessage += utils.isEmpty(invalidMessage) ? "DataType label is not valid!" : "\n" + "DataType label is not valid!";
-    }
-    if (utils.isEmpty(value)) {
-        invalidMessage += utils.isEmpty(invalidMessage) ? "DataType value is not valid!" : "\n" + "DataType value is not valid!";
-    }
-    if (!utils.isEmpty(invalidMessage)) {
-        res.status(400).send({ result: 0, message: invalidMessage });
-        return;
-    }
-
-    next();
-};
-
 const dataTypeCheck = {
-    checkDataTypeExist,
-    checkValidParams
+    checkDataTypeExist
 };
 
 module.exports = dataTypeCheck;
