@@ -7,7 +7,11 @@ dotenv.config();
 const app = express();
 
 let corsOptions = {
+<<<<<<< HEAD
   origin: process.env.FRONT_ORIGIN.split(' ')
+=======
+  origin: "http://localhost:8081"
+>>>>>>> parent of 77712a6 (Update Port and Add env)
 };
 
 app.use(cors(corsOptions));
@@ -66,7 +70,7 @@ require("./app/routes/attributes.routes")(app);
 require("./app/routes/assetBank.routes")(app);
 
 // set port, listen for requests
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
