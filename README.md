@@ -9,9 +9,11 @@ How to run!
     https://www.mongodb.com/docs/manual/installation/
 
 - database
-    You need to create database of which name is "wemint_db".
 
-    and set config in app/config/db.config.js
+    set config in app/config/db.config.js
+
+- server config
+    set PORT and FRONT_ORIGIN in .env
 
 - run
     - To install dependency packages

@@ -6,7 +6,7 @@ const DataType = db.dataType;
 
 
 checkAttributeExist = (req, res, next) => {
-    // attributeId
+    // attribute
     Attribute.findOne({
         _id: req.body.id
     }).exec((err, attribute) => {
@@ -32,26 +32,26 @@ checkAttributeExist = (req, res, next) => {
 
 checkValidParams = (req, res, next) => {
 
-    const categoryId = req.body.categoryId;
-    const dataTypeId = req.body.dataTypeId;
+    const category = req.body.category;
+    const dataType = req.body.dataType;
 
     let invalidMessage = "";
 
-    // categoryId
+    // category
     Category.findOne({
-        _id: categoryId
+        _id: category
     }).exec((err, cateogry) => {
         if (err || !cateogry) {
-            invalidMessage = "Category Id is not valid!";
+            invalidMessage = "Category is not valid!";
         }
 
-        // dataTypeId
+        // dataType
         DataType.findOne({
-            _id: dataTypeId
+            _id: dataType
         }).exec((err, dataType) => {
 
             if (err || !dataType) {
-                invalidMessage += utils.isEmpty(invalidMessage) ? "DataType Id is not valid!" : "\n" + "DataType Id is not valid!";
+                invalidMessage += utils.isEmpty(invalidMessage) ? "DataType is not valid!" : "\n" + "DataType is not valid!";
             }
 
             if (!utils.isEmpty(invalidMessage)) {

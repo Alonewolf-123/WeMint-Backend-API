@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Attribute = mongoose.model(
     "Attribute",
     new mongoose.Schema({
-        categoryId: {
+        category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Category",
             required: true
@@ -14,7 +14,7 @@ const Attribute = mongoose.model(
             required: true
         },
 
-        dataTypeId: {
+        dataType: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "DataType",
             required: true

@@ -25,13 +25,13 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return catchError(err, res);
     }
-    req.userId = decoded.id;
+    req.user = decoded.id;
     next();
   });
 };
 
 const isAdmin = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
+  User.findById(req.user).exec((err, user) => {
     if (err) {
       res.status(500).send({ result: 0, message: err });
       return;

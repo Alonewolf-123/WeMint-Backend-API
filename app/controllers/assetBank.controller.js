@@ -1,6 +1,10 @@
 const multer = require('multer');
 const path = require('path');
 const db = require("../models");
+const Attribute = require('../models/attribute/attribute.model');
+const Category = require('../models/category/category.model');
+const User = require('../models/user/user.model');
+const utils = require('../utils/utils');
 const AssetBank = db.assetBank;
 
 const storage = multer.diskStorage({
@@ -40,16 +44,32 @@ function checkFileType(file, cb) {
 }
 
 exports.allAssetBanks = (req, res) => {
-    res.status(200).send({ result: 1 });
+    AssetBank.find({deleted: false}).populate("user").populate("category").then((assetBanks) => {
+        res.status(200).send({ result: 1, data: assetBanks });
+    }).catch((err) => {
+        if (err) {
+            res.status(500).send({ result: 0, message: err });
+            return;
+        }
+    });
 };
 
 exports.delAssetBank = (req, res) => {
-    res.status(200).send({ result: 1 });
+    const assetBank = req.body.id;
+    AssetBank.findOneAndUpdate({ _id: assetBank }, { deleted: true }, {
+        new: true
+    }, function (err, assetBank) {
+        if (err) {
+            res.status(500).send({ result: 0, message: err });
+            return;
+        }
+        res.status(200).send({ result: 1, message: 'AssetBank was deleted successfully!' });
+    });
 };
 
 exports.createAssetBank = (req, res) => {
     upload(req, res, function (err) {
-        
+
         if (err instanceof multer.MulterError) {
             res.status(500).send({ result: 0, message: err.message });
             return;
@@ -58,33 +78,97 @@ exports.createAssetBank = (req, res) => {
             return;
         }
 
-        console.log(req.file);
-        if(req.file == undefined || req.file.filename == undefined) {
+        if (req.file == undefined || req.file.filename == undefined) {
             res.status(500).send({ result: 0, message: 'Invalid Asset' });
             return;
         }
 
-        const assetBank = new AssetBank({
-            asset: req.file.filename,
-            name: req.body.name,
-            externalLink: req.body.externalLink,
-            description: req.body.description,
-            userId: req.body.userId,
-            categoryId: req.body.categoryId,
-            attributeValues: req.body.attributeValues,
-            artist: req.body.artist,
-            supply: req.body.supply,
-            blockchain: req.body.blockchain,
-        });
+        const category = req.body.category;
+        const user = req.body.user;
 
-        assetBank.save((err, category) => {
-            if (err) {
-                res.status(500).send({ result: 0, message: err.message });
-                return;
+        let invalidMessage = "";
+
+        // category
+        Category.findOne({
+            _id: category
+        }).exec((err, cateogry) => {
+            if (err || !cateogry) {
+                invalidMessage = "Category is not valid!";
             }
 
-            res.send({ result: 1, message: "AssetBank was created successfully!" });
+            // user
+            User.findOne({
+                _id: user
+            }).exec((err, dataType) => {
+
+                if (err || !dataType) {
+                    invalidMessage += utils.isEmpty(invalidMessage) ? "User is not valid!" : "\n" + "User is not valid!";
+                }
+
+                if (!utils.isEmpty(invalidMessage)) {
+                    res.status(400).send({ result: 0, message: invalidMessage });
+                    return;
+                }
+                let attributeValues;
+                try {
+                    attributeValues = JSON.parse(req.body.attributeValues);
+                } catch (err) {
+                    console.log(err);
+                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                    return;
+                }
+                let attributeIds = Object.keys(attributeValues);
+                if (attributeIds.length == 0) {
+                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                    return;
+                } else {
+                    Attribute.find({ category: category }).where('_id').in(attributeIds).then((attributes) => {
+                        if (attributes.length == attributeIds.length) {
+                            attributeIds.forEach(element => {
+                                if (utils.isEmpty(attributeValues[element])) {
+                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                    return;
+                                }
+                            });
+                            const assetBank = new AssetBank({
+                                asset: req.file.filename,
+                                name: req.body.name,
+                                externalLink: req.body.externalLink,
+                                description: req.body.description,
+                                user: req.body.user,
+                                category: req.body.category,
+                                attributeValues: attributeValues,
+                                artist: req.body.artist,
+                                supply: req.body.supply,
+                                blockchain: req.body.blockchain,
+                            });
+
+                            assetBank.save((err, result) => {
+                                if (err) {
+                                    res.status(500).send({ result: 0, message: err.message });
+                                    return;
+                                }
+
+                                res.send({ result: 1, message: "AssetBank was created successfully!", data: result });
+                            });
+                        } else {
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            return;
+                        }
+                    }).catch((err) => {
+                        if (err) {
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            return;
+                        }
+                    });
+                }
+
+
+
+            });
+
         });
+
 
     })
 };

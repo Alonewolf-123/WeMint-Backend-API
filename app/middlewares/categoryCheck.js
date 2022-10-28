@@ -4,7 +4,7 @@ const Category = db.category;
 
 
 checkCategoryExist = (req, res, next) => {
-    // categoryId
+    // category
     Category.findOne({
         _id: req.body.id
     }).exec((err, category) => {

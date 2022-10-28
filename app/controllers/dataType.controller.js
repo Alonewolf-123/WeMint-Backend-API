@@ -3,27 +3,42 @@ const DataType = db.dataType;
 
 
 exports.allDataTypes = (req, res) => {
-    DataType.find({}, function (err, categories) {
-
+    DataType.aggregate([
+        { $match: { deleted: false } },
+        { $sort: { name: -1 } },
+        {
+            $lookup: {
+                from: 'attributes',
+                pipeline: [
+                    {
+                        $match: { deleted: false }
+                    }
+                ],
+                localField: '_id',
+                foreignField: 'dataType',
+                as: 'attributes'
+            }
+        }
+    ]).then(dataTypes => {
+        res.status(200).send({ result: 1, data: dataTypes });
+    }).catch(err => {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-
-        res.status(200).send({ result: 1, categories: categories });
     });
 };
 
 exports.delDataType = (req, res) => {
-    const dataTypeId = req.body.id;
-    DataType.findOneAndUpdate({ _id: dataTypeId }, { deleted: true }, {
+    const dataType = req.body.id;
+    DataType.findOneAndUpdate({ _id: dataType }, { deleted: true }, {
         new: true
     }, function (err, dataType) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-        res.status(200).send({ result: 1, dataType: dataType, message: 'DataType was deleted successfully!' });
+        res.status(200).send({ result: 1, message: 'DataType was deleted successfully!' });
     });
 };
 
@@ -31,14 +46,14 @@ exports.createDataType = (req, res) => {
     const dataType = new DataType({
         name: req.body.name,
         description: req.body.description
-      });
-    
-      dataType.save((err, dataType) => {
+    });
+
+    dataType.save((err, dataType) => {
         if (err) {
-          res.status(500).send({ result: 0, message: err });
-          return;
+            res.status(500).send({ result: 0, message: err });
+            return;
         }
-    
-        res.send({ result: 1, message: "DataType was created successfully!" });
-      });
+
+        res.send({ result: 1, message: "DataType was created successfully!", data: dataType });
+    });
 };

@@ -23,7 +23,7 @@ checkDuplicateEmail = (req, res, next) => {
 };
 
 checkUserExist = (req, res, next) => {
-  // userId
+  // user
   User.findOne({
     _id: req.body.id
   }).exec((err, user) => {
@@ -64,28 +64,15 @@ checkRolesExisted = (req, res, next) => {
 };
 
 checkValidParams = (req, res, next) => {
-  const firstName = req.body.firstName;
-  const lastName = req.body.lastName;
-  const email = req.body.email;
   const password = req.body.password;
   let invalidMessage = "";
-  if (utils.isEmpty(firstName)) {
-    invalidMessage = "First Name is not valid!";
-  }
-  if (utils.isEmpty(lastName)) {
-    invalidMessage += utils.isEmpty(invalidMessage) ? "Last Name is not valid!" : "\n" + "Last Name is not valid!";
-  }
-  if (!utils.checkemail(email)) {
-    invalidMessage += utils.isEmpty(invalidMessage) ? "Email is not valid!" : "\n" + "Email is not valid!";
-  }
   if (utils.isEmpty(password)) {
-    invalidMessage += utils.isEmpty(invalidMessage) ? "Password is not valid!" : "\n" + "Password is not valid!";
+    invalidMessage = "Password is not valid!";
   }
   if (!utils.isEmpty(invalidMessage)) {
     res.status(400).send({ result: 0, message: invalidMessage });
     return;
   }
-
   next();
 };
 

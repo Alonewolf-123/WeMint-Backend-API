@@ -4,7 +4,7 @@ const DataType = db.dataType;
 
 
 checkDataTypeExist = (req, res, next) => {
-    // dataTypeId
+    // dataType
     DataType.findOne({
         _id: req.body.id
     }).exec((err, dataType) => {

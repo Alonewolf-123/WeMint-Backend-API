@@ -19,12 +19,12 @@ const AssetBank = mongoose.model(
             type: String,
             required: true
         },
-        userId: {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true
+            required: true,
         },
-        categoryId: {
+        category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Category",
             required: true

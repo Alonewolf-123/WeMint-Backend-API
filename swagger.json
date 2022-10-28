@@ -20,10 +20,13 @@
       "name": "Category Management"
     },
     {
+      "name": "DataType Management"
+    },
+    {
       "name": "Attribute Management"
     },
     {
-      "name": "DataType management"
+      "name": "AssetBank Management"
     }
   ],
   "paths": {
@@ -352,6 +355,134 @@
         }
       }
     },
+    "/admin/datatypes/all": {
+      "get": {
+        "tags": [
+          "DataType Management"
+        ],
+        "summary": "Get All DataTypes",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/datatype/del": {
+      "post": {
+        "tags": [
+          "DataType Management"
+        ],
+        "summary": "Delete DataType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "635459da97ba6126459b11e1"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/datatype/create": {
+      "post": {
+        "tags": [
+          "DataType Management"
+        ],
+        "summary": "Create DataType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "type": "type",
+                  "label": "label",
+                  "value": "value"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/admin/attributes/all": {
       "get": {
         "tags": [
@@ -398,7 +529,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "aaaa"
+                  "id": "635709b8589a1c6963c5b305"
                 }
               }
             }
@@ -444,8 +575,9 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "name": "category",
-                  "description": "This is test category"
+                  "category": "635b7758789621745f5177f0",
+                  "attribute": "test",
+                  "dataType": "635b7772789621745f5177f7"
                 }
               }
             }
@@ -479,12 +611,12 @@
         }
       }
     },
-    "/admin/datatypes/all": {
+    "/admin/assetbanks/all": {
       "get": {
         "tags": [
-          "DataType management"
+          "AssetBank Management"
         ],
-        "summary": "Get All DataTypes",
+        "summary": "Get All AssetBanks",
         "parameters": [
           {
             "name": "Content-Type",
@@ -513,19 +645,19 @@
         }
       }
     },
-    "/admin/datatype/del": {
+    "/admin/assetbank/del": {
       "post": {
         "tags": [
-          "DataType management"
+          "AssetBank Management"
         ],
-        "summary": "Delete DataType",
+        "summary": "Delete AssetBank",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "635459da97ba6126459b11e1"
+                  "id": "635b8f36a4b8bf1281ca47ea"
                 }
               }
             }
@@ -559,21 +691,59 @@
         }
       }
     },
-    "/admin/datatype/create": {
+    "/admin/assetbank/create": {
       "post": {
         "tags": [
-          "DataType management"
+          "AssetBank Management"
         ],
-        "summary": "Create DataType",
+        "summary": "Create AssetBank",
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "example": {
-                  "type": "type",
-                  "label": "label",
-                  "value": "value"
+                "properties": {
+                  "asset": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "name"
+                  },
+                  "externalLink": {
+                    "type": "string",
+                    "example": "externalLink"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "description"
+                  },
+                  "user": {
+                    "type": "string",
+                    "example": "635b766fbd24f93f8f7a5b4f"
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "635b7758789621745f5177f0"
+                  },
+                  "attributeValues": {
+                    "type": "string",
+                    "example": "{\"635b7d478802fbf3da1fb07a\":\"ssssss\"}"
+                  },
+                  "artist": {
+                    "type": "string",
+                    "description": "\n",
+                    "example": "artist"
+                  },
+                  "supply": {
+                    "type": "string",
+                    "example": "supply"
+                  },
+                  "blockchain": {
+                    "type": "string",
+                    "example": "blockchain"
+                  }
                 }
               }
             }

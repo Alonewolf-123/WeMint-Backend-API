@@ -3,26 +3,26 @@ const User = db.user;
 
 
 exports.allUsers = (req, res) => {
-  User.find({}, function (err, users) {
 
+  User.find({ deleted: false }).populate("roles").then((users) => {
+    res.status(200).send({ result: 1, users: users });
+  }).catch((err) => {
     if (err) {
       res.status(500).send({ result: 0, message: err });
       return;
     }
-
-    res.status(200).send({ result: 1, users: users });
   });
 };
 
 exports.delUser = (req, res) => {
-  const userId = req.body.id;
-  User.findOneAndUpdate({ _id: userId }, { deleted: true }, {
+  const user = req.body.id;
+  User.findOneAndUpdate({ _id: user }, { deleted: true }, {
     new: true
   }, function (err, user) {
     if (err) {
       res.status(500).send({ result: 0, message: err });
       return;
     }
-    res.status(200).send({ result: 1, user: user, message: 'User was deleted successfully!' });
+    res.status(200).send({ result: 1, message: 'User was deleted successfully!' });
   });
 };

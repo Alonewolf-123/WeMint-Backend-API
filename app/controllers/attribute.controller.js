@@ -3,43 +3,42 @@ const Attribute = db.attribute;
 
 
 exports.allAttributes = (req, res) => {
-    Attribute.find({}, function (err, attributes) {
-
+    Attribute.find({deleted: false}).populate("category").populate("dataType").then((attributes) => {
+        res.status(200).send({ result: 1, data: attributes });
+    }).catch((err) => {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-
-        res.status(200).send({ result: 1, attributes: attributes });
     });
 };
 
 exports.delAttribute = (req, res) => {
-    const AttributeId = req.body.id;
-    Attribute.findOneAndUpdate({ _id: AttributeId }, { deleted: true }, {
+    const attribute = req.body.id;
+    Attribute.findOneAndUpdate({ _id: attribute }, { deleted: true }, {
         new: true
     }, function (err, attribute) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-        res.status(200).send({ result: 1, attribute: attribute, message: 'Attribute was deleted successfully!' });
+        res.status(200).send({ result: 1, message: 'Attribute was deleted successfully!' });
     });
 };
 
 exports.createAttribute = (req, res) => {
     const attribute = new Attribute({
-        categoryId: req.body.categoryId,
+        category: req.body.category,
         attribute: req.body.attribute,
-        dataTypeId: req.body.dataTypeId
-      });
-    
-      attribute.save((err, attribute) => {
+        dataType: req.body.dataType
+    });
+
+    attribute.save((err, attribute) => {
         if (err) {
-          res.status(500).send({ result: 0, message: err });
-          return;
+            res.status(500).send({ result: 0, message: err });
+            return;
         }
-    
+
         res.send({ result: 1, message: "Attribute was created successfully!" });
-      });
+    });
 };
