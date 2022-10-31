@@ -3,9 +3,18 @@ const mongoose = require("mongoose");
 const DataType = mongoose.model(
   "DataType",
   new mongoose.Schema({
-    type: String,
-    label: String,
-    value: String,
+    type: {
+      type: String,
+      required: true
+    },
+    label: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: String,
+      required: true
+    },
     deleted: {
       type: Boolean,
       default: false

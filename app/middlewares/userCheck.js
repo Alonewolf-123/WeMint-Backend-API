@@ -33,13 +33,6 @@ checkUserExist = (req, res, next) => {
     }
 
     if (user) {
-      if(user.deleted) {
-        res.status(400).send({
-          result: 0,
-          message: `User was deleted already!`
-        });
-        return;
-      }
       next();
       return;
     }

@@ -16,13 +16,6 @@ checkAttributeExist = (req, res, next) => {
         }
 
         if (attribute) {
-            if (attribute.deleted) {
-                res.status(400).send({
-                    result: 0,
-                    message: `Attribute was deleted already!`
-                });
-                return;
-            }
             next();
             return;
         }

@@ -14,13 +14,6 @@ checkCategoryExist = (req, res, next) => {
         }
 
         if (category) {
-            if (category.deleted) {
-                res.status(400).send({
-                    result: 0,
-                    message: `Category was deleted already!`
-                });
-                return;
-            }
             next();
             return;
         }

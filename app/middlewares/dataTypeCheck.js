@@ -14,13 +14,6 @@ checkDataTypeExist = (req, res, next) => {
         }
 
         if (dataType) {
-            if (dataType.deleted) {
-                res.status(400).send({
-                    result: 0,
-                    message: `DataType was deleted already!`
-                });
-                return;
-            }
             next();
             return;
         }

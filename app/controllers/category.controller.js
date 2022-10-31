@@ -1,10 +1,15 @@
 const db = require("../models");
+const utils = require("../utils/utils");
 const Category = db.category;
 
 
 exports.allCategories = (req, res) => {
+
+    const search = req.query.search ? req.query.search : '';
+    const query = !utils.isEmpty(search) ? { $and: [{ deleted: false }, { $or: [{ name: { '$regex': search } }, { description: { '$regex': search } }] }] } : { deleted: false };
+
     Category.aggregate([
-        { $match: { deleted: false } },
+        { $match: query },
         { $sort: { name: -1 } },
         {
             $lookup: {
@@ -26,6 +31,21 @@ exports.allCategories = (req, res) => {
             res.status(500).send({ result: 0, message: err });
             return;
         }
+    });
+};
+
+exports.updateCategory = (req, res) => {
+    const category = req.body.id;
+    const name = req.body.name;
+    const description = req.body.description;
+    Category.findOneAndUpdate({ _id: category }, { name: name, description: description }, {
+        new: true
+    }, function (err, category) {
+        if (err) {
+            res.status(500).send({ result: 0, message: err });
+            return;
+        }
+        res.status(200).send({ result: 1, message: 'Category was updated successfully!' });
     });
 };
 

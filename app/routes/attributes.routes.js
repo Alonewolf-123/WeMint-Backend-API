@@ -26,5 +26,14 @@ module.exports = function (app) {
         ],
         controller.delAttribute
     );
-
+    
+    app.post(
+        "/api/admin/attribute/update",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            attributeCheck.checkAttributeExist,
+            attributeCheck.checkValidParams
+        ],
+        controller.updateAttribute
+    );
 };

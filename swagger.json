@@ -170,6 +170,14 @@
               "type": "string"
             },
             "example": "{{accessToken}}"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "sss"
           }
         ],
         "responses": {
@@ -228,12 +236,25 @@
         }
       }
     },
-    "/admin/categories/all": {
-      "get": {
+    "/admin/user/update": {
+      "post": {
         "tags": [
-          "Category Management"
+          "User Management"
         ],
-        "summary": "Get All Categories",
+        "summary": "Update User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "635b766fbd24f93f8f7a5b4f",
+                  "firstName": "sss"
+                }
+              }
+            }
+          }
+        },
         "parameters": [
           {
             "name": "Content-Type",
@@ -262,6 +283,48 @@
         }
       }
     },
+    "/admin/categories/all": {
+      "get": {
+        "tags": [
+          "Category Management"
+        ],
+        "summary": "Get All Categories",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/admin/category/del": {
       "post": {
         "tags": [
@@ -275,6 +338,53 @@
                 "type": "object",
                 "example": {
                   "id": "aaaa"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/category/update": {
+      "post": {
+        "tags": [
+          "Category Management"
+        ],
+        "summary": "Update Category",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "635b7758789621745f5177f0",
+                  "name": "new name"
                 }
               }
             }
@@ -377,6 +487,14 @@
               "type": "string"
             },
             "example": "{{accessToken}}"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "ty"
           }
         ],
         "responses": {
@@ -402,6 +520,55 @@
                 "type": "object",
                 "example": {
                   "id": "635459da97ba6126459b11e1"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/datatype/update": {
+      "post": {
+        "tags": [
+          "DataType Management"
+        ],
+        "summary": "Update DataType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "635f94d647e62017f4166ad5",
+                  "type": "typ1",
+                  "label": "label1",
+                  "value": "value1"
                 }
               }
             }
@@ -505,6 +672,22 @@
               "type": "string"
             },
             "example": "{{accessToken}}"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "te"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "635b7758789621745f5177f0"
           }
         ],
         "responses": {
@@ -569,6 +752,54 @@
           "Attribute Management"
         ],
         "summary": "Create Attribute",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "category": "635b7758789621745f5177f0",
+                  "attribute": "test",
+                  "dataType": "635b7772789621745f5177f7"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/attribute/update": {
+      "post": {
+        "tags": [
+          "Attribute Management"
+        ],
+        "summary": "Update Attribute",
         "requestBody": {
           "content": {
             "application/json": {

@@ -14,7 +14,7 @@ module.exports = function (app) {
         [authJwt.verifyToken, authJwt.isAdmin],
         controller.allCategories
     );
-
+    
     app.post(
         "/api/admin/category/del",
         [authJwt.verifyToken, authJwt.isAdmin],
@@ -22,6 +22,15 @@ module.exports = function (app) {
             categoryCheck.checkCategoryExist
         ],
         controller.delCategory
+    );
+
+    app.post(
+        "/api/admin/category/update",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            categoryCheck.checkCategoryExist
+        ],
+        controller.updateCategory
     );
 
 };

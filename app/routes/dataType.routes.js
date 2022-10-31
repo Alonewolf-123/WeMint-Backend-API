@@ -14,7 +14,7 @@ module.exports = function (app) {
         [authJwt.verifyToken, authJwt.isAdmin],
         controller.allDataTypes
     );
-
+    
     app.post(
         "/api/admin/datatype/del",
         [authJwt.verifyToken, authJwt.isAdmin],
@@ -22,6 +22,15 @@ module.exports = function (app) {
             dataTypeCheck.checkDataTypeExist
         ],
         controller.delDataType
+    );
+
+    app.post(
+        "/api/admin/datatype/update",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            dataTypeCheck.checkDataTypeExist
+        ],
+        controller.updateDataType
     );
 
 };

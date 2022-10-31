@@ -18,4 +18,13 @@ module.exports = function(app) {
     controller.delUser
   );
 
+  app.post(
+    "/api/admin/user/update",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    [
+      userCheck.checkUserExist
+    ],
+    controller.updateUser
+  );
+  
 };

@@ -1,6 +1,6 @@
 module.exports = {
   secret: "wemint-secret-key",
-  jwtExpiration: 3600,         // 1 hour
+  jwtExpiration: 43200,         // 12 hour
   jwtRefreshExpiration: 86400, // 24 hours
 
   /* for test */

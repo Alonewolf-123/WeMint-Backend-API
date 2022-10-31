@@ -6,11 +6,11 @@ const Category = mongoose.model(
     name: {
       type: String,
       required: true
-  },
+    },
     description: {
       type: String,
       required: true
-  },
+    },
     deleted: {
       type: Boolean,
       default: false
