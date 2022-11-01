@@ -21,5 +21,13 @@ module.exports = {
         } else {
             return /^\s*$/.test(str);
         }
+    },
+    withoutTime: (date) => {
+        var d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        console.log(date);
+        console.log(d);
+        return d.toISOString().slice(0, 10);
     }
+
 };

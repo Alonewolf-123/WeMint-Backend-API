@@ -24,4 +24,22 @@ module.exports = function (app) {
         controller.delAssetBank
     );
 
+    app.post(
+        "/api/admin/assetbank/update",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            assetBankCheck.checkAssetBankExist
+        ],
+        controller.updateAssetBank
+    );
+
+    app.post(
+        "/api/admin/assetbank/changeuser",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            assetBankCheck.checkAssetBankExist
+        ],
+        controller.changeUser
+    );
+
 };

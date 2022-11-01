@@ -4,10 +4,16 @@ const DataType = db.dataType;
 
 exports.allDataTypes = (req, res) => {
 
-    // (deleted == false) && (type like search || label like search || value like search)
+    // (deleted == deleted) && (type like search || label like search || value like search)
 
+    let deleted = false;
+    if (req.query.deleted != undefined) {
+        if (req.query.deleted == true || req.query.deleted.toLowerCase().trim() == 'true') {
+            deleted = true;
+        }
+    }
     const search = req.query.search ? req.query.search : '';
-    const query = search ? { $and: [{ deleted: false }, { $or: [{ type: { '$regex': search } }, { label: { '$regex': search } }, { value: { '$regex': search } }] }] } : { deleted: false };
+    const query = search ? { $and: [{ deleted: deleted }, { $or: [{ type: { '$regex': search } }, { label: { '$regex': search } }, { value: { '$regex': search } }] }] } : { deleted: false };
 
     DataType.aggregate([
         { $match: query },
@@ -43,7 +49,7 @@ exports.updateDataType = (req, res) => {
     const value = req.body.value;
 
     DataType.findOneAndUpdate({ _id: dataType }, { type: type, label: label, value }, {
-        new: true
+        new: false
     }, function (err, dataType) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
@@ -55,8 +61,8 @@ exports.updateDataType = (req, res) => {
 
 exports.delDataType = (req, res) => {
     const dataType = req.body.id;
-    DataType.findOneAndUpdate({ _id: dataType }, { deleted: true }, {
-        new: true
+    DataType.updateMany({ _id: dataType }, { deleted: true }, {
+        new: false
     }, function (err, dataType) {
         if (err) {
             res.status(500).send({ result: 0, message: err });

@@ -4,9 +4,17 @@ const User = db.user;
 
 
 exports.allUsers = (req, res) => {
-  // (deleted == false) && (firstName like search || lastName like search || email like search)
+
+  // (deleted == deleted) && (firstName like search || lastName like search || email like search)
+
+  let deleted = false;
+  if (req.query.deleted != undefined) {
+    if (req.query.deleted == true || req.query.deleted.toLowerCase().trim() == 'true') {
+      deleted = true;
+    }
+  }
   const search = req.query.search ? req.query.search : '';
-  const query = !utils.isEmpty(search) ? { $and: [{ deleted: false }, { $or: [{ firstName: { '$regex': search } }, { lastName: { '$regex': search } }, { email: { '$regex': search } }] }] } : { deleted: false };
+  const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ firstName: { '$regex': search } }, { lastName: { '$regex': search } }, { email: { '$regex': search } }] }] } : { deleted: false };
   User.find(query).populate("roles").then((users) => {
     res.status(200).send({ result: 1, users: users });
   }).catch((err) => {
@@ -24,7 +32,7 @@ exports.updateUser = (req, res) => {
   const email = req.body.email;
   console.log({ firstName: firstName, lastName: lastName, email: email });
   User.findOneAndUpdate({ _id: user }, { firstName: firstName, lastName: lastName, email: email }, {
-    new: true
+    new: false
   }, function (err, user) {
     if (err) {
       res.status(500).send({ result: 0, message: err });
@@ -36,8 +44,8 @@ exports.updateUser = (req, res) => {
 
 exports.delUser = (req, res) => {
   const user = req.body.id;
-  User.findOneAndUpdate({ _id: user }, { deleted: true }, {
-    new: true
+  User.updateMany({ _id: user }, { deleted: true }, {
+    new: false
   }, function (err, user) {
     if (err) {
       res.status(500).send({ result: 0, message: err });

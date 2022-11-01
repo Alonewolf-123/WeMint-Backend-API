@@ -5,20 +5,28 @@ const Attribute = db.attribute;
 
 exports.allAttributes = (req, res) => {
 
-    // (deleted == false) && (attribute like search && category == category)
+    // (deleted == deleted) && (attribute like search && category == category)
 
+    let deleted = false;
+    if (req.query.deleted != undefined) {
+        if (req.query.deleted == true || req.query.deleted.toLowerCase().trim() == 'true') {
+            deleted = true;
+        }
+    }
     const search = req.query.search ? req.query.search : '';
     const category = req.query.category ? req.query.category : '';
-    let query;
-    if (!utils.isEmpty(search) && !utils.isEmpty(category)) {
-        query = { $and: [{ deleted: false }, { attribute: { '$regex': search } }, { category: category }] };
-    } else if (!utils.isEmpty(search)) {
-        query = { $and: [{ deleted: false }, { attribute: { '$regex': search } }] };
-    } else if (!utils.isEmpty(category)) {
-        query = { $and: [{ deleted: false }, { category: category }] };
-    } else {
-        query = { deleted: false };
+
+    let conditions = [{ deleted: deleted }];
+
+    if (!utils.isEmpty(search)) {
+        conditions.push({ attribute: { '$regex': search } });
     }
+
+    if (!utils.isEmpty(category)) {
+        conditions.push({ category: category });
+    }
+
+    query = { $and: conditions };
 
     Attribute.find(query).populate("category").populate("dataType").then((attributes) => {
         res.status(200).send({ result: 1, data: attributes });
@@ -37,7 +45,7 @@ exports.updateAttribute = (req, res) => {
         attribute: req.body.attribute,
         dataType: req.body.dataType
     }, {
-        new: true
+        new: false
     }, function (err, attribute) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
@@ -49,8 +57,8 @@ exports.updateAttribute = (req, res) => {
 
 exports.delAttribute = (req, res) => {
     const attribute = req.body.id;
-    Attribute.findOneAndUpdate({ _id: attribute }, { deleted: true }, {
-        new: true
+    Attribute.updateMany({ _id: attribute }, { deleted: true }, {
+        new: false
     }, function (err, attribute) {
         if (err) {
             res.status(500).send({ result: 0, message: err });

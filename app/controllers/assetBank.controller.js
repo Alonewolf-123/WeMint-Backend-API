@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
+
 var upload = multer({
     storage: storage,
     limits: {
@@ -44,10 +45,44 @@ function checkFileType(file, cb) {
 }
 
 exports.allAssetBanks = (req, res) => {
-    AssetBank.find({deleted: false}).populate("user").populate("category").then((assetBanks) => {
+
+    // (deleted == deleted) && (name like search && user == user && date=date)
+
+    let deleted = false;
+    if (req.query.deleted != undefined) {
+        if (req.query.deleted == true || req.query.deleted.toLowerCase().trim() == 'true') {
+            deleted = true;
+        }
+    }
+    const search = req.query.search ? req.query.search : '';
+    const user = req.query.user ? req.query.user : '';
+    const date = req.query.date ? req.query.date : '';
+    let query;
+
+    let conditions = [{ deleted: deleted }];
+
+    if (!utils.isEmpty(search)) {
+        conditions.push({ name: { '$regex': search } });
+    }
+
+    if (!utils.isEmpty(user)) {
+        conditions.push({ user: user });
+    }
+
+    if (!utils.isEmpty(date)) {
+        conditions.push({ '$where': 'this.created_at.toJSON().slice(0, 10) == "' + date + '"' });
+    }
+
+    query = { $and: conditions };
+
+    AssetBank.find(query).populate("user").populate("category").then((assetBanks) => {
         res.status(200).send({ result: 1, data: assetBanks });
     }).catch((err) => {
         if (err) {
+            if (err.name && err.name == 'CastError') {
+                res.status(500).send({ result: 1, data: [] });
+                return;
+            }
             res.status(500).send({ result: 0, message: err });
             return;
         }
@@ -56,8 +91,8 @@ exports.allAssetBanks = (req, res) => {
 
 exports.delAssetBank = (req, res) => {
     const assetBank = req.body.id;
-    AssetBank.findOneAndUpdate({ _id: assetBank }, { deleted: true }, {
-        new: true
+    AssetBank.updateMany({ _id: assetBank }, { deleted: true }, {
+        new: false
     }, function (err, assetBank) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
@@ -65,6 +100,36 @@ exports.delAssetBank = (req, res) => {
         }
         res.status(200).send({ result: 1, message: 'AssetBank was deleted successfully!' });
     });
+};
+
+exports.changeUser = (req, res) => {
+    const user = req.body.user;
+    // user
+    User.findOne({
+        _id: user
+    }).exec((err, userItem) => {
+
+        if (err || !userItem) {
+            res.status(400).send({ result: 0, message: "User is not valid!" });
+            return;
+        }
+
+        const assetBank = req.body.id;
+        AssetBank.updateMany({ _id: assetBank }, { user: user }, {
+            new: false
+        }, function (err, assetBank) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'AssetBank User was updated successfully!' });
+        });
+
+    });
+};
+
+exports.updateAssetBank = (req, res) => {
+
 };
 
 exports.createAssetBank = (req, res) => {
@@ -99,9 +164,9 @@ exports.createAssetBank = (req, res) => {
             // user
             User.findOne({
                 _id: user
-            }).exec((err, dataType) => {
+            }).exec((err, userItem) => {
 
-                if (err || !dataType) {
+                if (err || !userItem) {
                     invalidMessage += utils.isEmpty(invalidMessage) ? "User is not valid!" : "\n" + "User is not valid!";
                 }
 

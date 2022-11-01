@@ -4,7 +4,7 @@ const AssetBank = require("../models/assetBank/assetBank.model");
 
 checkAssetBankExist = (req, res, next) => {
     // AssetBank
-    AssetBank.findOne({
+    AssetBank.find({
         _id: req.body.id
     }).exec((err, assetBank) => {
         if (err) {
@@ -13,13 +13,6 @@ checkAssetBankExist = (req, res, next) => {
         }
 
         if (assetBank) {
-            if (assetBank.deleted) {
-                res.status(400).send({
-                    result: 0,
-                    message: `AssetBank was deleted already!`
-                });
-                return;
-            }
             next();
             return;
         }

@@ -5,8 +5,17 @@ const Category = db.category;
 
 exports.allCategories = (req, res) => {
 
+    // (deleted == deleted) && (name like search && description like date)
+
+    let deleted = false;
+    if(req.query.deleted != undefined) {
+        if(req.query.deleted == true || req.query.deleted.toLowerCase().trim() == 'true') {
+            deleted = true;
+        }
+    }
+
     const search = req.query.search ? req.query.search : '';
-    const query = !utils.isEmpty(search) ? { $and: [{ deleted: false }, { $or: [{ name: { '$regex': search } }, { description: { '$regex': search } }] }] } : { deleted: false };
+    const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ name: { '$regex': search } }, { description: { '$regex': search } }] }] } : { deleted: deleted };
 
     Category.aggregate([
         { $match: query },
@@ -39,7 +48,7 @@ exports.updateCategory = (req, res) => {
     const name = req.body.name;
     const description = req.body.description;
     Category.findOneAndUpdate({ _id: category }, { name: name, description: description }, {
-        new: true
+        new: false
     }, function (err, category) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
@@ -51,8 +60,8 @@ exports.updateCategory = (req, res) => {
 
 exports.delCategory = (req, res) => {
     const category = req.body.id;
-    Category.findOneAndUpdate({ _id: category }, { deleted: true }, {
-        new: true
+    Category.updateMany({ _id: category }, { deleted: true }, {
+        new: false
     }, function (err, category) {
         if (err) {
             res.status(500).send({ result: 0, message: err });

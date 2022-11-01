@@ -178,6 +178,14 @@
               "type": "string"
             },
             "example": "sss"
+          },
+          {
+            "name": "deleted",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": "false"
           }
         ],
         "responses": {
@@ -313,6 +321,14 @@
               "type": "string"
             },
             "example": "test"
+          },
+          {
+            "name": "deleted",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": "true"
           }
         ],
         "responses": {
@@ -677,9 +693,9 @@
             "name": "search",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
-            "example": "te"
+            "example": "1"
           },
           {
             "name": "category",
@@ -806,8 +822,9 @@
               "schema": {
                 "type": "object",
                 "example": {
+                  "id": "635b7d478802fbf3da1fb07a",
                   "category": "635b7758789621745f5177f0",
-                  "attribute": "test",
+                  "attribute": "test1",
                   "dataType": "635b7772789621745f5177f7"
                 }
               }
@@ -864,6 +881,88 @@
               "type": "string"
             },
             "example": "{{accessToken}}"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2022-10-28"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "name"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "635b766fbd24f93f8f7a5b4f"
+          },
+          {
+            "name": "deleted",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": "true"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/assetbank/changeuser": {
+      "post": {
+        "tags": [
+          "AssetBank Management"
+        ],
+        "summary": "Change User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": [
+                    "635b8f36a4b8bf1281ca47ea",
+                    "635b8f36a4b8bf1281ca47ea"
+                  ],
+                  "user": "635b766fbd24f93f8f7a5b4f"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
           }
         ],
         "responses": {
@@ -888,7 +987,9 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "635b8f36a4b8bf1281ca47ea"
+                  "id": [
+                    "635b8f36a4b8bf1281ca47ea"
+                  ]
                 }
               }
             }
