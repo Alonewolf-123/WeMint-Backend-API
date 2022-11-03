@@ -27,9 +27,6 @@ module.exports = function (app) {
     app.post(
         "/api/admin/assetbank/update",
         [authJwt.verifyToken, authJwt.isAdmin],
-        [
-            assetBankCheck.checkAssetBankExist
-        ],
         controller.updateAssetBank
     );
 

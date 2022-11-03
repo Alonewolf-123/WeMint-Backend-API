@@ -19,7 +19,8 @@ module.exports = function (app) {
         "/api/admin/datatype/del",
         [authJwt.verifyToken, authJwt.isAdmin],
         [
-            dataTypeCheck.checkDataTypeExist
+            dataTypeCheck.checkDataTypeExist,
+            dataTypeCheck.checkDateTypeCanDelete
         ],
         controller.delDataType
     );

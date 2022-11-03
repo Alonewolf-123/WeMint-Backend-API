@@ -128,10 +128,6 @@ exports.changeUser = (req, res) => {
     });
 };
 
-exports.updateAssetBank = (req, res) => {
-
-};
-
 exports.createAssetBank = (req, res) => {
     upload(req, res, function (err) {
 
@@ -234,6 +230,124 @@ exports.createAssetBank = (req, res) => {
 
         });
 
+
+    })
+};
+
+exports.updateAssetBank = (req, res) => {
+    upload(req, res, function (err) {
+
+        if (err instanceof multer.MulterError) {
+            res.status(500).send({ result: 0, message: err.message });
+            return;
+        } else if (err) {
+            res.status(500).send({ result: 0, message: err });
+            return;
+        }
+
+        if (req.file == undefined || req.file.filename == undefined) {
+            res.status(500).send({ result: 0, message: 'Invalid Asset' });
+            return;
+        }
+
+        const assetBank = req.body.id;
+        AssetBank.find({
+            _id: assetBank
+        }).exec((err, assetBank) => {
+            console.log(assetBank);
+            if (err || assetBank == null || assetBank == undefined || assetBank.length == 0) {
+                res.status(404).send({ result: 0, message: "AssetBank Not found!" });
+                return;
+            }
+            
+            if (assetBank) {
+                const category = req.body.category;
+                const user = req.body.user;
+
+                let invalidMessage = "";
+
+                // category
+                Category.findOne({
+                    _id: category
+                }).exec((err, cateogry) => {
+                    if (err || !cateogry) {
+                        invalidMessage = "Category is not valid!";
+                    }
+
+                    // user
+                    User.findOne({
+                        _id: user
+                    }).exec((err, userItem) => {
+
+                        if (err || !userItem) {
+                            invalidMessage += utils.isEmpty(invalidMessage) ? "User is not valid!" : "\n" + "User is not valid!";
+                        }
+
+                        if (!utils.isEmpty(invalidMessage)) {
+                            res.status(400).send({ result: 0, message: invalidMessage });
+                            return;
+                        }
+                        let attributeValues;
+                        try {
+                            attributeValues = JSON.parse(req.body.attributeValues);
+                        } catch (err) {
+                            console.log(err);
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            return;
+                        }
+                        let attributeIds = Object.keys(attributeValues);
+                        if (attributeIds.length == 0) {
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            return;
+                        } else {
+                            Attribute.find({ category: category }).where('_id').in(attributeIds).then((attributes) => {
+                                if (attributes.length == attributeIds.length) {
+                                    attributeIds.forEach(element => {
+                                        if (utils.isEmpty(attributeValues[element])) {
+                                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                            return;
+                                        }
+                                    });
+
+                                    AssetBank.findOneAndUpdate({ _id: assetBank }, {
+                                        asset: req.file.filename,
+                                        name: req.body.name,
+                                        externalLink: req.body.externalLink,
+                                        description: req.body.description,
+                                        user: req.body.user,
+                                        category: req.body.category,
+                                        attributeValues: attributeValues,
+                                        artist: req.body.artist,
+                                        supply: req.body.supply,
+                                        blockchain: req.body.blockchain,
+                                    }, {
+                                        new: false
+                                    }, function (err, data) {
+                                        if (err) {
+                                            res.status(500).send({ result: 0, message: err });
+                                            return;
+                                        }
+                                        res.status(200).send({ result: 1, message: 'AssetBank was updated successfully!' });
+                                    });
+                                } else {
+                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                    return;
+                                }
+                            }).catch((err) => {
+                                if (err) {
+                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                    return;
+                                }
+                            });
+                        }
+
+                    });
+
+                });
+                return;
+            }
+            res.status(404).send({ result: 0, message: "AssetBank Not found!" });
+        });
 
     })
 };

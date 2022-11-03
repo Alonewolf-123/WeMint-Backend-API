@@ -10,7 +10,7 @@ checkAttributeExist = (req, res, next) => {
     Attribute.findOne({
         _id: req.body.id
     }).exec((err, attribute) => {
-        if (err) {
+        if (err || attribute == null || attribute == undefined || attribute.length == 0) {
             res.status(404).send({ result: 0, message: "Attribute Not found!" });
             return;
         }

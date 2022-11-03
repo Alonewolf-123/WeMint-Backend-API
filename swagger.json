@@ -210,7 +210,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "userid"
+                  "id": "635b766fbd24f93f8f7a5b4f"
                 }
               }
             }
@@ -328,7 +328,7 @@
             "schema": {
               "type": "boolean"
             },
-            "example": "true"
+            "example": "false"
           }
         ],
         "responses": {
@@ -353,7 +353,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "aaaa"
+                  "id": "635b7758789621745f5177f0"
                 }
               }
             }
@@ -505,12 +505,19 @@
             "example": "{{accessToken}}"
           },
           {
+            "name": "deleted",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": "false"
+          },
+          {
             "name": "search",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "example": "ty"
+            }
           }
         ],
         "responses": {
@@ -535,7 +542,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "635459da97ba6126459b11e1"
+                  "id": "635b7772789621745f5177f7"
                 }
               }
             }
@@ -1075,6 +1082,96 @@
                   "blockchain": {
                     "type": "string",
                     "example": "blockchain"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/assetbank/update": {
+      "post": {
+        "tags": [
+          "AssetBank Management"
+        ],
+        "summary": "Update AssetBank",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "name"
+                  },
+                  "externalLink": {
+                    "type": "string",
+                    "example": "externalLink"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "description11111"
+                  },
+                  "user": {
+                    "type": "string",
+                    "example": "635b766fbd24f93f8f7a5b4f"
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "635b7758789621745f5177f0"
+                  },
+                  "attributeValues": {
+                    "type": "string",
+                    "example": "{\"635b7d478802fbf3da1fb07a\":\"ssssss\"}"
+                  },
+                  "artist": {
+                    "type": "string",
+                    "description": "\n",
+                    "example": "artist"
+                  },
+                  "supply": {
+                    "type": "string",
+                    "example": "supply"
+                  },
+                  "blockchain": {
+                    "type": "string",
+                    "example": "blockchain"
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "635b8f36a4b8bf1281ca47ea"
                   }
                 }
               }

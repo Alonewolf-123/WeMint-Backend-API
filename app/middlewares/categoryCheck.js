@@ -1,5 +1,7 @@
 const utils = require("../utils/utils");
 const db = require("../models");
+const Attribute = require("../models/attribute/attribute.model");
+const AssetBank = require("../models/assetBank/assetBank.model");
 const Category = db.category;
 
 
@@ -8,7 +10,7 @@ checkCategoryExist = (req, res, next) => {
     Category.findOne({
         _id: req.body.id
     }).exec((err, category) => {
-        if (err) {
+        if (err || category == null || category == undefined || category.length == 0) {
             res.status(404).send({ result: 0, message: "Category Not found!" });
             return;
         }
@@ -21,8 +23,36 @@ checkCategoryExist = (req, res, next) => {
     });
 };
 
+checkCategoryCanDelete = (req, res, next) => {
+    const category = req.body.id;
+    const query = { category: category, deleted: false };
+    Attribute.find(query).then((attributes) => {
+        if (attributes && attributes.length > 0) {
+            res.status(400).send({ result: 0, message: "This category can't be deleted" });
+        } else {
+            AssetBank.find(query).then((assetBanks) => {
+                if (assetBanks && assetBanks.length > 0) {
+                    res.status(400).send({ result: 0, message: "This category can't be deleted" });
+                }
+            }).catch((err) => {
+                next();
+            });
+        }
+    }).catch((err) => {
+
+        AssetBank.find(query).then((assetBanks) => {
+            if (assetBanks && assetBanks.length > 0) {
+                res.status(400).send({ result: 0, message: "This category can't be deleted" });
+            }
+        }).catch((err) => {
+            next();
+        });
+    });
+};
+
 const categoryCheck = {
-    checkCategoryExist
+    checkCategoryExist,
+    checkCategoryCanDelete
 };
 
 module.exports = categoryCheck;

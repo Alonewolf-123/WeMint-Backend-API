@@ -19,7 +19,8 @@ module.exports = function (app) {
         "/api/admin/category/del",
         [authJwt.verifyToken, authJwt.isAdmin],
         [
-            categoryCheck.checkCategoryExist
+            categoryCheck.checkCategoryExist,
+            categoryCheck.checkCategoryCanDelete
         ],
         controller.delCategory
     );

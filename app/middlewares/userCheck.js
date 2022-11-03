@@ -1,5 +1,6 @@
 const utils = require("../utils/utils");
 const db = require("../models");
+const AssetBank = require("../models/assetBank/assetBank.model");
 const ROLES = db.ROLES;
 const User = db.user;
 
@@ -27,7 +28,7 @@ checkUserExist = (req, res, next) => {
   User.findOne({
     _id: req.body.id
   }).exec((err, user) => {
-    if (err) {
+    if (err || user == null || user == undefined || user.length == 0) {
       res.status(404).send({ result: 0, message: "User Not found!" });
       return;
     }
@@ -69,11 +70,23 @@ checkValidParams = (req, res, next) => {
   next();
 };
 
+checkUserCanDelete = (req, res, next) => {
+  const query = { deleted: false, user: req.body.id };
+  AssetBank.find(query).then((assetBanks) => {
+    if (assetBanks && assetBanks.length > 0) {
+      res.status(400).send({ result: 0, message: "This user can't be deleted" });
+    }
+  }).catch((err) => {
+    next();
+  });
+};
+
 const userCheck = {
   checkDuplicateEmail,
   checkRolesExisted,
   checkValidParams,
-  checkUserExist
+  checkUserExist,
+  checkUserCanDelete
 };
 
 module.exports = userCheck;

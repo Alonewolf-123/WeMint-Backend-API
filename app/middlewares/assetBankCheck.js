@@ -7,11 +7,10 @@ checkAssetBankExist = (req, res, next) => {
     AssetBank.find({
         _id: req.body.id
     }).exec((err, assetBank) => {
-        if (err) {
+        if (err || assetBank == null || assetBank == undefined || assetBank.length == 0) {
             res.status(404).send({ result: 0, message: "AssetBank Not found!" });
             return;
         }
-
         if (assetBank) {
             next();
             return;

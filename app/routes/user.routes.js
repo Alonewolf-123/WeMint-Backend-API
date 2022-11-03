@@ -13,7 +13,8 @@ module.exports = function(app) {
     "/api/admin/user/del",
     [authJwt.verifyToken, authJwt.isAdmin],
     [
-      userCheck.checkUserExist
+      userCheck.checkUserExist,
+      userCheck.checkUserCanDelete
     ],
     controller.delUser
   );
