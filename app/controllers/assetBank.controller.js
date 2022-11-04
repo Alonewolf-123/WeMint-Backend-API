@@ -245,16 +245,10 @@ exports.updateAssetBank = (req, res) => {
             return;
         }
 
-        if (req.file == undefined || req.file.filename == undefined) {
-            res.status(500).send({ result: 0, message: 'Invalid Asset' });
-            return;
-        }
-
         const assetBank = req.body.id;
         AssetBank.find({
             _id: assetBank
         }).exec((err, assetBank) => {
-            console.log(assetBank);
             if (err || assetBank == null || assetBank == undefined || assetBank.length == 0) {
                 res.status(404).send({ result: 0, message: "AssetBank Not found!" });
                 return;
@@ -308,9 +302,9 @@ exports.updateAssetBank = (req, res) => {
                                             return;
                                         }
                                     });
+                                    console.log(req.file);
 
-                                    AssetBank.findOneAndUpdate({ _id: assetBank }, {
-                                        asset: req.file.filename,
+                                    let update = {
                                         name: req.body.name,
                                         externalLink: req.body.externalLink,
                                         description: req.body.description,
@@ -320,7 +314,13 @@ exports.updateAssetBank = (req, res) => {
                                         artist: req.body.artist,
                                         supply: req.body.supply,
                                         blockchain: req.body.blockchain,
-                                    }, {
+                                    };
+
+                                    if (req.file != undefined && req.file.filename == undefined) {
+                                        update['asset'] = req.file.filename;
+                                    }
+
+                                    AssetBank.findOneAndUpdate({ _id: assetBank }, update, {
                                         new: false
                                     }, function (err, data) {
                                         if (err) {
