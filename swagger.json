@@ -42,10 +42,10 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "firstName": "firstName",
-                  "lastName": "lastName",
-                  "email": "test@gmail.com",
-                  "password": "test"
+                  "firstName": "firstName11",
+                  "lastName": "lastName11",
+                  "email": "test@gmail.com11",
+                  "password": "test1"
                 }
               }
             }
@@ -176,8 +176,7 @@
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "example": "sss"
+            }
           },
           {
             "name": "deleted",
@@ -186,6 +185,22 @@
               "type": "boolean"
             },
             "example": "false"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
           }
         ],
         "responses": {
@@ -319,8 +334,7 @@
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "example": "test"
+            }
           },
           {
             "name": "deleted",
@@ -329,6 +343,22 @@
               "type": "boolean"
             },
             "example": "false"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "0"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
           }
         ],
         "responses": {
@@ -518,6 +548,22 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
           }
         ],
         "responses": {
@@ -711,6 +757,22 @@
               "type": "string"
             },
             "example": "635b7758789621745f5177f0"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "0"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
           }
         ],
         "responses": {
@@ -920,6 +982,22 @@
               "type": "boolean"
             },
             "example": "true"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "0"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
           }
         ],
         "responses": {
