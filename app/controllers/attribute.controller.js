@@ -13,6 +13,10 @@ exports.allAttributes = (req, res) => {
             deleted = true;
         }
     }
+    const pageOptions = {
+        page: parseInt(req.query.page, 0) || 0,
+        limit: parseInt(req.query.limit, 10) || 10
+    };
     const search = req.query.search ? req.query.search : '';
     const category = req.query.category ? req.query.category : '';
 
@@ -27,15 +31,21 @@ exports.allAttributes = (req, res) => {
     }
 
     query = { $and: conditions };
-
-    Attribute.find(query).populate("category").populate("dataType").then((attributes) => {
-        res.status(200).send({ result: 1, data: attributes });
+    let cusor = Attribute.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit);
+    cusor.count().then((count) => {
+        const totalPageCount = Math.floor(count / pageOptions.limit) + 1;
+        Attribute.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit).populate("category").populate("dataType").then((attributes) => {
+            res.status(200).send({ result: 1, data: attributes, pageCount: totalPageCount, page: pageOptions.page, pageLimit: pageOptions.limit });
+        }).catch((err) => {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+        });
     }).catch((err) => {
-        if (err) {
-            res.status(500).send({ result: 0, message: err });
-            return;
-        }
+        res.status(500).send({ result: 0, message: err });
     });
+    
 };
 
 exports.updateAttribute = (req, res) => {

@@ -8,14 +8,18 @@ exports.allCategories = (req, res) => {
     // (deleted == deleted) && (name like search && description like date)
 
     let deleted = false;
-    if(req.query.deleted != undefined) {
-        if(req.query.deleted == true || req.query.deleted.toLowerCase().trim() == 'true') {
+    if (req.query.deleted != undefined) {
+        if (req.query.deleted == true || req.query.deleted.toLowerCase().trim() == 'true') {
             deleted = true;
         }
     }
-
+    const pageOptions = {
+        page: parseInt(req.query.page, 0) || 0,
+        limit: parseInt(req.query.limit, 10) || 10
+    };
     const search = req.query.search ? req.query.search : '';
     const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ name: { '$regex': search, '$options': "i" } }, { description: { '$regex': search, '$options': "i" } }] }] } : { deleted: deleted };
+
 
     Category.aggregate([
         { $match: query },
@@ -32,10 +36,30 @@ exports.allCategories = (req, res) => {
                 foreignField: 'category',
                 as: 'attributes'
             }
+        },
+        {
+            $facet: {
+                paginatedResults: [{ $skip: pageOptions.page * pageOptions.limit }, { $limit: pageOptions.limit }],
+                totalCount: [
+                    {
+                        $count: 'count'
+                    }
+                ]
+            }
         }
-    ]).then(categories => {
-        res.status(200).send({ result: 1, data: categories });
+    ]).then(result => {
+        result = result[0];
+        let categories = result.paginatedResults;
+        try {
+            const totalPageCount = Math.floor(result.totalCount[0].count / pageOptions.limit) + 1;
+            res.status(200).send({ result: 1, data: categories, pageCount: totalPageCount, page: pageOptions.page, pageLimit: pageOptions.limit });
+            return;
+        } catch (error) {
+            res.status(200).send({ result: 1, data: [], page: pageOptions.page, pageLimit: pageOptions.limit });
+            return;
+        }
     }).catch(err => {
+        console.log(err);
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;

@@ -14,7 +14,10 @@ exports.allDataTypes = (req, res) => {
     }
     const search = req.query.search ? req.query.search : '';
     const query = search ? { $and: [{ deleted: deleted }, { $or: [{ type: { '$regex': search, '$options': "i" } }, { label: { '$regex': search, '$options': "i" } }, { value: { '$regex': search, '$options': "i" } }] }] } : { deleted: false };
-
+    const pageOptions = {
+        page: parseInt(req.query.page, 0) || 0,
+        limit: parseInt(req.query.limit, 10) || 10
+    };
     DataType.aggregate([
         { $match: query },
         { $sort: { name: -1 } },
@@ -30,8 +33,29 @@ exports.allDataTypes = (req, res) => {
                 foreignField: 'dataType',
                 as: 'attributes'
             }
+        },
+        {
+            $facet: {
+                paginatedResults: [{ $skip: pageOptions.page * pageOptions.limit }, { $limit: pageOptions.limit }],
+                totalCount: [
+                    {
+                        $count: 'count'
+                    }
+                ]
+            }
         }
-    ]).then(dataTypes => {
+    ]).then(result => {
+
+        result = result[0];
+        let dataTypes = result.paginatedResults;
+        try {
+            const totalPageCount = Math.floor(result.totalCount[0].count / pageOptions.limit) + 1;
+            res.status(200).send({ result: 1, data: dataTypes, pageCount: totalPageCount, page: pageOptions.page, pageLimit: pageOptions.limit });
+            return;
+        } catch (error) {
+            res.status(200).send({ result: 1, data: [], page: pageOptions.page, pageLimit: pageOptions.limit });
+            return;
+        }
         res.status(200).send({ result: 1, data: dataTypes });
     }).catch(err => {
         if (err) {

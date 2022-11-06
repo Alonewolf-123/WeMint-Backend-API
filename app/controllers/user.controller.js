@@ -13,16 +13,28 @@ exports.allUsers = (req, res) => {
       deleted = true;
     }
   }
+
+  const pageOptions = {
+    page: parseInt(req.query.page, 0) || 0,
+    limit: parseInt(req.query.limit, 10) || 10
+  };
   const search = req.query.search ? req.query.search : '';
   const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ firstName: { '$regex': search, '$options': "i" } }, { lastName: { '$regex': search, '$options': "i" } }, { email: { '$regex': search, '$options': "i" } }] }] } : { deleted: false };
-  User.find(query).populate("roles").then((users) => {
-    res.status(200).send({ result: 1, users: users });
+  let cusor = User.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit);
+  cusor.count().then((count) => {
+    const totalPageCount = Math.floor(count / pageOptions.limit) + 1;
+    User.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit).populate("roles").then((users) => {
+      res.status(200).send({ result: 1, data: users, pageCount: totalPageCount, page: pageOptions.page, pageLimit: pageOptions.limit });
+    }).catch((err) => {
+      if (err) {
+        res.status(500).send({ result: 0, message: err });
+        return;
+      }
+    });
   }).catch((err) => {
-    if (err) {
-      res.status(500).send({ result: 0, message: err });
-      return;
-    }
+    res.status(500).send({ result: 0, message: err });
   });
+
 };
 
 exports.updateUser = (req, res) => {

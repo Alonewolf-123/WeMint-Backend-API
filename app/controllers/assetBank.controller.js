@@ -75,18 +75,29 @@ exports.allAssetBanks = (req, res) => {
 
     query = { $and: conditions };
 
-    AssetBank.find(query).populate("user").populate("category").then((assetBanks) => {
-        res.status(200).send({ result: 1, data: assetBanks });
-    }).catch((err) => {
-        if (err) {
-            if (err.name && err.name == 'CastError') {
-                res.status(500).send({ result: 1, data: [] });
+    const pageOptions = {
+        page: parseInt(req.query.page, 0) || 0,
+        limit: parseInt(req.query.limit, 10) || 10
+    };
+    let cusor = AssetBank.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit);
+    cusor.count().then((count) => {
+        const totalPageCount = Math.floor(count / pageOptions.limit) + 1;
+        AssetBank.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit).populate("user").populate("category").then((assetBanks) => {
+            res.status(200).send({ result: 1, data: assetBanks, pageCount: totalPageCount, page: pageOptions.page, pageLimit: pageOptions.limit });
+        }).catch((err) => {
+            if (err) {
+                if (err.name && err.name == 'CastError') {
+                    res.status(500).send({ result: 1, data: [] });
+                    return;
+                }
+                res.status(500).send({ result: 0, message: err });
                 return;
             }
-            res.status(500).send({ result: 0, message: err });
-            return;
-        }
-    });
+        });
+      }).catch((err) => {
+        res.status(500).send({ result: 0, message: err });
+      });
+    
 };
 
 exports.delAssetBank = (req, res) => {
@@ -253,7 +264,7 @@ exports.updateAssetBank = (req, res) => {
                 res.status(404).send({ result: 0, message: "AssetBank Not found!" });
                 return;
             }
-            
+
             if (assetBank) {
                 const category = req.body.category;
                 const user = req.body.user;
