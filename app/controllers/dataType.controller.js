@@ -13,7 +13,7 @@ exports.allDataTypes = (req, res) => {
         }
     }
     const search = req.query.search ? req.query.search : '';
-    const query = search ? { $and: [{ deleted: deleted }, { $or: [{ type: { '$regex': search } }, { label: { '$regex': search } }, { value: { '$regex': search } }] }] } : { deleted: false };
+    const query = search ? { $and: [{ deleted: deleted }, { $or: [{ type: { '$regex': search, '$options': "i" } }, { label: { '$regex': search, '$options': "i" } }, { value: { '$regex': search, '$options': "i" } }] }] } : { deleted: false };
 
     DataType.aggregate([
         { $match: query },

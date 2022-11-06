@@ -14,7 +14,7 @@ exports.allUsers = (req, res) => {
     }
   }
   const search = req.query.search ? req.query.search : '';
-  const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ firstName: { '$regex': search } }, { lastName: { '$regex': search } }, { email: { '$regex': search } }] }] } : { deleted: false };
+  const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ firstName: { '$regex': search, '$options': "i" } }, { lastName: { '$regex': search, '$options': "i" } }, { email: { '$regex': search, '$options': "i" } }] }] } : { deleted: false };
   User.find(query).populate("roles").then((users) => {
     res.status(200).send({ result: 1, users: users });
   }).catch((err) => {
@@ -30,7 +30,6 @@ exports.updateUser = (req, res) => {
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const email = req.body.email;
-  console.log({ firstName: firstName, lastName: lastName, email: email });
   User.findOneAndUpdate({ _id: user }, { firstName: firstName, lastName: lastName, email: email }, {
     new: false
   }, function (err, user) {

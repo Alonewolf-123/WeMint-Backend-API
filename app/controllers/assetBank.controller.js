@@ -62,7 +62,7 @@ exports.allAssetBanks = (req, res) => {
     let conditions = [{ deleted: deleted }];
 
     if (!utils.isEmpty(search)) {
-        conditions.push({ name: { '$regex': search } });
+        conditions.push({ name: { '$regex': search, '$options': "i" } });
     }
 
     if (!utils.isEmpty(user)) {

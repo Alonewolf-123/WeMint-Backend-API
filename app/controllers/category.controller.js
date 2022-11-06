@@ -15,7 +15,7 @@ exports.allCategories = (req, res) => {
     }
 
     const search = req.query.search ? req.query.search : '';
-    const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ name: { '$regex': search } }, { description: { '$regex': search } }] }] } : { deleted: deleted };
+    const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ name: { '$regex': search, '$options': "i" } }, { description: { '$regex': search, '$options': "i" } }] }] } : { deleted: deleted };
 
     Category.aggregate([
         { $match: query },

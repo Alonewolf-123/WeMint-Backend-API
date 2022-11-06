@@ -78,7 +78,7 @@ exports.signin = (req, res) => {
       }
 
       if(!req.body.password) {
-        return res.status(401).send({
+        return res.status(200).send({
           result: 0,
           accessToken: null,
           message: "Invalid Password!",
@@ -91,7 +91,7 @@ exports.signin = (req, res) => {
       );
 
       if (!passwordIsValid) {
-        return res.status(401).send({
+        return res.status(200).send({
           result: 0,
           accessToken: null,
           message: "Invalid Password!",

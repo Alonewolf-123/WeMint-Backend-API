@@ -8,10 +8,10 @@ const { TokenExpiredError } = jwt;
 
 const catchError = (err, res) => {
   if (err instanceof TokenExpiredError) {
-    return res.status(401).send({ result: 0, message: "Unauthorized! Access Token was expired!" });
+    return res.status(200).send({ result: 0, message: "Unauthorized! Access Token was expired!" });
   }
 
-  return res.status(401).send({ result: 0, message: "Unauthorized!" });
+  return res.status(200).send({ result: 0, message: "Unauthorized!" });
 }
 
 const verifyToken = (req, res, next) => {

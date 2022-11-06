@@ -19,7 +19,7 @@ exports.allAttributes = (req, res) => {
     let conditions = [{ deleted: deleted }];
 
     if (!utils.isEmpty(search)) {
-        conditions.push({ attribute: { '$regex': search } });
+        conditions.push({ attribute: { '$regex': search, '$options': "i" } });
     }
 
     if (!utils.isEmpty(category)) {
