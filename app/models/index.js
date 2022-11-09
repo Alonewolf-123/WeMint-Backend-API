@@ -13,6 +13,6 @@ db.dataType = require("./dataType/dataType.model");
 db.attribute = require("./attribute/attribute.model");
 db.assetBank = require("./assetBank/assetBank.model");
 
-db.ROLES = ["user", "admin"];
+db.ROLES = ["user", "admin", "super"];
 
 module.exports = db;

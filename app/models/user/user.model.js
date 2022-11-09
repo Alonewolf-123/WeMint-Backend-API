@@ -26,6 +26,10 @@ const User = mongoose.model(
         ref: "Role"
       }
     ],
+    locked: {
+      type: Boolean,
+      default: false
+    },
     deleted: {
       type: Boolean,
       default: false

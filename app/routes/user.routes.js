@@ -20,6 +20,15 @@ module.exports = function(app) {
   );
 
   app.post(
+    "/api/admin/user/lockandunlock",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    [
+      userCheck.checkUserExist
+    ],
+    controller.lockAndUnlockUser
+  );
+
+  app.post(
     "/api/admin/user/update",
     [authJwt.verifyToken, authJwt.isAdmin],
     [

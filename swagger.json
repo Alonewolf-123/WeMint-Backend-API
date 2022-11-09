@@ -110,6 +110,102 @@
         }
       }
     },
+    "/auth/resetpassword": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "resetpassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "test@gmail.com",
+                  "password": "test1",
+                  "newpassword": "test"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/updateprofile": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "updateprofile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "635b766fbd24f93f8f7a5b4f",
+                  "firstName": "test1",
+                  "lastName": "test"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/auth/refreshtoken": {
       "post": {
         "tags": [
@@ -259,6 +355,53 @@
         }
       }
     },
+    "/admin/user/lockandunlock": {
+      "post": {
+        "tags": [
+          "User Management"
+        ],
+        "summary": "LockAndUnlock",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "635b766fbd24f93f8f7a5b4f",
+                  "locked": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/admin/user/update": {
       "post": {
         "tags": [
@@ -272,7 +415,9 @@
                 "type": "object",
                 "example": {
                   "id": "635b766fbd24f93f8f7a5b4f",
-                  "firstName": "sss"
+                  "firstName": "sss",
+                  "lastName": "fff",
+                  "password": "test"
                 }
               }
             }

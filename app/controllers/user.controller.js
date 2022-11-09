@@ -2,6 +2,7 @@ const db = require("../models");
 const utils = require("../utils/utils");
 const User = db.user;
 
+const bcrypt = require("bcryptjs");
 
 exports.allUsers = (req, res) => {
 
@@ -42,7 +43,11 @@ exports.updateUser = (req, res) => {
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const email = req.body.email;
-  User.findOneAndUpdate({ _id: user }, { firstName: firstName, lastName: lastName, email: email }, {
+  let data = { firstName: firstName, lastName: lastName, email: email };
+  if (!utils.isEmpty(req.body.password)) {
+    data['password'] = bcrypt.hashSync(req.body.password, 8);
+  }
+  User.findOneAndUpdate({ _id: user }, data, {
     new: false
   }, function (err, user) {
     if (err) {
@@ -63,5 +68,19 @@ exports.delUser = (req, res) => {
       return;
     }
     res.status(200).send({ result: 1, message: 'User was deleted successfully!' });
+  });
+};
+
+exports.lockAndUnlockUser = (req, res) => {
+  const user = req.body.id;
+  const locked = req.body.locked;
+  User.updateMany({ _id: user }, { locked: locked }, {
+    new: false
+  }, function (err, user) {
+    if (err) {
+      res.status(500).send({ result: 0, message: err });
+      return;
+    }
+    res.status(200).send({ result: 1, message: 'User was ' + (locked ? 'locked' : 'unlocked') + ' successfully!' });
   });
 };

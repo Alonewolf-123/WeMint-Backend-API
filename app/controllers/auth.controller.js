@@ -4,6 +4,7 @@ const { user: User, role: Role, refreshToken: RefreshToken } = db;
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const utils = require("../utils/utils");
 
 exports.signup = (req, res) => {
   const user = new User({
@@ -62,6 +63,76 @@ exports.signup = (req, res) => {
   });
 };
 
+exports.resetPassword = (req, res) => {
+  User.findOne({
+    email: req.body.email,
+  })
+    .populate("roles", "-__v")
+    .exec(async (err, user) => {
+      if (err) {
+        res.status(500).send({ result: 0, message: err });
+        return;
+      }
+
+      if (!user) {
+        return res.status(404).send({ result: 0, message: "User Not found!" });
+      }
+
+      if (utils.isEmpty(req.body.password)) {
+        return res.status(200).send({
+          result: 0,
+          accessToken: null,
+          message: "Invalid Password!",
+        });
+      }
+
+      if (utils.isEmpty(req.body.newpassword)) {
+        return res.status(200).send({
+          result: 0,
+          message: "Invalid New Password!",
+        });
+      }
+
+      let passwordIsValid = bcrypt.compareSync(
+        req.body.password,
+        user.password
+      );
+
+      if (!passwordIsValid) {
+        return res.status(200).send({
+          result: 0,
+          message: "Invalid Password!",
+        });
+      }
+
+      User.findOneAndUpdate({ email: req.body.email }, { password: bcrypt.hashSync(req.body.newpassword, 8) }, {
+        new: false
+      }, function (err, user) {
+        if (err) {
+          res.status(500).send({ result: 0, message: err });
+          return;
+        }
+        res.status(200).send({ result: 1, message: 'Password was updated successfully!' });
+      });
+    });
+};
+
+exports.updateUser = (req, res) => {
+  const user = req.body.id;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  let data = { firstName: firstName, lastName: lastName };
+  User.findOneAndUpdate({ _id: user }, data, {
+    new: false
+  }, function (err, user) {
+    if (err) {
+      res.status(500).send({ result: 0, message: err });
+      return;
+    }
+    res.status(200).send({ result: 1, message: 'User was updated successfully!' });
+  });
+};
+
 exports.signin = (req, res) => {
   User.findOne({
     email: req.body.email,
@@ -77,7 +148,15 @@ exports.signin = (req, res) => {
         return res.status(404).send({ result: 0, message: "User Not found!" });
       }
 
-      if(!req.body.password) {
+      if (user && user.deleted) {
+        return res.status(200).send({ result: 0, message: "You were deleted and able to do nothing!" });
+      }
+  
+      if (user && user.locked != undefined && user.locked) {
+        return res.status(200).send({ result: 0, message: "You were locked and able to do nothing!" });
+      }
+
+      if (utils.isEmpty(req.body.password)) {
         return res.status(200).send({
           result: 0,
           accessToken: null,

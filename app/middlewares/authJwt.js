@@ -37,6 +37,14 @@ const isAdmin = (req, res, next) => {
       return;
     }
 
+    if (user && user.deleted) {
+      return res.status(200).send({ result: 0, message: "You were deleted and able to do nothing!" });
+    }
+
+    if (user && user.locked != undefined && user.locked) {
+      return res.status(200).send({ result: 0, message: "You were locked and able to do nothing!" });
+    }
+
     Role.find(
       {
         _id: { $in: user.roles }
