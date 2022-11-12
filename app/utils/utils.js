@@ -28,6 +28,10 @@ module.exports = {
         console.log(date);
         console.log(d);
         return d.toISOString().slice(0, 10);
+    },
+    isBase64String: (value) => {
+        const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+        return base64regex.test(value);
     }
 
 };

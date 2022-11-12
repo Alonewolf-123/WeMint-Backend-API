@@ -1,4 +1,5 @@
 const db = require("../models");
+const utils = require("../utils/utils");
 const DataType = db.dataType;
 
 
@@ -72,6 +73,13 @@ exports.updateDataType = (req, res) => {
     const label = req.body.label;
     const value = req.body.value;
 
+    if(!utils.isEmpty(value)) {
+        if(!utils.isBase64String(value)) {
+            res.status(400).send({ result: 0, message: "Value should be base64 string!" });
+            return;
+        }
+    }
+
     DataType.findOneAndUpdate({ _id: dataType }, { type: type, label: label, value }, {
         new: false
     }, function (err, dataType) {
@@ -97,6 +105,11 @@ exports.delDataType = (req, res) => {
 };
 
 exports.createDataType = (req, res) => {
+    let value = req.body.value;
+    if(!utils.isBase64String(value)) {
+        res.status(400).send({ result: 0, message: "Value should be base64 string!" });
+        return;
+    }
     const dataType = new DataType({
         type: req.body.type,
         label: req.body.label,

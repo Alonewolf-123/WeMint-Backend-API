@@ -94,10 +94,10 @@ exports.allAssetBanks = (req, res) => {
                 return;
             }
         });
-      }).catch((err) => {
+    }).catch((err) => {
         res.status(500).send({ result: 0, message: err });
-      });
-    
+    });
+
 };
 
 exports.delAssetBank = (req, res) => {
@@ -194,14 +194,27 @@ exports.createAssetBank = (req, res) => {
                     res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
                     return;
                 } else {
-                    Attribute.find({ category: category }).where('_id').in(attributeIds).then((attributes) => {
+                    Attribute.find({ category: category }).where('_id').in(attributeIds).populate('dataType').then((attributes) => {
                         if (attributes.length == attributeIds.length) {
-                            attributeIds.forEach(element => {
-                                if (utils.isEmpty(attributeValues[element])) {
-                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                                    return;
-                                }
-                            });
+                            let attributeCheckMessage = '';
+                            try {
+                                attributes.forEach(element => {
+                                    let regEx = new RegExp(Buffer.from(element.dataType.value, 'base64').toString());
+                                    let dataTypeValue = regEx.test(attributeValues[element['_id']]);
+                                    if (!dataTypeValue) {
+                                        attributeCheckMessage = utils.isEmpty(attributeCheckMessage) ? 'Attribute ' + element.attribute + ' is invalid.' : attributeCheckMessage + "\n" + 'Attribute ' + element.attribute + ' is invalid.'
+                                    }
+                                });
+                            } catch (error) {
+                                console.log(error);
+                                res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                return;
+                            }
+                            if (!utils.isEmpty(attributeCheckMessage)) {
+                                res.status(400).send({ result: 0, message: attributeCheckMessage });
+                                return;
+                            }
+
                             const assetBank = new AssetBank({
                                 asset: req.file.filename,
                                 name: req.body.name,
@@ -234,9 +247,6 @@ exports.createAssetBank = (req, res) => {
                         }
                     });
                 }
-
-
-
             });
 
         });
@@ -305,15 +315,26 @@ exports.updateAssetBank = (req, res) => {
                             res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
                             return;
                         } else {
-                            Attribute.find({ category: category }).where('_id').in(attributeIds).then((attributes) => {
+                            Attribute.find({ category: category }).where('_id').in(attributeIds).populate('dataType').then((attributes) => {
                                 if (attributes.length == attributeIds.length) {
-                                    attributeIds.forEach(element => {
-                                        if (utils.isEmpty(attributeValues[element])) {
-                                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                                            return;
-                                        }
-                                    });
-                                    console.log(req.file);
+                                    let attributeCheckMessage = '';
+                                    try {
+                                        attributes.forEach(element => {
+                                            let regEx = new RegExp(Buffer.from(element.dataType.value, 'base64').toString());
+                                            let dataTypeValue = regEx.test(attributeValues[element['_id']]);
+                                            if (!dataTypeValue) {
+                                                attributeCheckMessage = utils.isEmpty(attributeCheckMessage) ? 'Attribute ' + element.attribute + ' is invalid.' : attributeCheckMessage + "\n" + 'Attribute ' + element.attribute + ' is invalid.'
+                                            }
+                                        });
+                                    } catch (error) {
+                                        console.log(error);
+                                        res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                        return;
+                                    }
+                                    if (!utils.isEmpty(attributeCheckMessage)) {
+                                        res.status(400).send({ result: 0, message: attributeCheckMessage });
+                                        return;
+                                    }
 
                                     let update = {
                                         name: req.body.name,
