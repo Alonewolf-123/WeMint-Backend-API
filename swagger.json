@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:4000/api"
+      "url": "http://localhost:4000"
     }
   ],
   "tags": [
@@ -42,10 +42,10 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "firstName": "firstName11",
-                  "lastName": "lastName11",
-                  "email": "test@gmail.com11",
-                  "password": "test1"
+                  "firstName": "First",
+                  "lastName": "Last",
+                  "email": "test@gmail.com1",
+                  "password": "test"
                 }
               }
             }
@@ -288,7 +288,7 @@
             "schema": {
               "type": "integer"
             },
-            "example": "1"
+            "example": "0"
           },
           {
             "name": "limit",
@@ -700,7 +700,7 @@
             "schema": {
               "type": "integer"
             },
-            "example": "1"
+            "example": "0"
           },
           {
             "name": "limit",
@@ -830,7 +830,7 @@
                 "example": {
                   "type": "type",
                   "label": "label",
-                  "value": "value"
+                  "value": "XihbYS16QS1aMC05Ll8lLV0rQFthLXpBLVowLTkuLV0rXC5bYS16QS1aXXsyLDZ9KSok"
                 }
               }
             }
@@ -891,17 +891,15 @@
             "name": "search",
             "in": "query",
             "schema": {
-              "type": "integer"
-            },
-            "example": "1"
+              "type": "string"
+            }
           },
           {
             "name": "category",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "example": "635b7758789621745f5177f0"
+            }
           },
           {
             "name": "page",
@@ -988,9 +986,9 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "category": "635b7758789621745f5177f0",
+                  "category": "636f6e5878bbaaf252feb17b",
                   "attribute": "test",
-                  "dataType": "635b7772789621745f5177f7"
+                  "dataType": "636f6d9474f1b9055b73e867"
                 }
               }
             }
@@ -1101,24 +1099,21 @@
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "example": "2022-10-28"
+            }
           },
           {
             "name": "search",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "example": "name"
+            }
           },
           {
             "name": "user",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "example": "635b766fbd24f93f8f7a5b4f"
+            }
           },
           {
             "name": "deleted",
@@ -1126,7 +1121,7 @@
             "schema": {
               "type": "boolean"
             },
-            "example": "true"
+            "example": "false"
           },
           {
             "name": "page",
@@ -1283,15 +1278,15 @@
                   },
                   "user": {
                     "type": "string",
-                    "example": "635b766fbd24f93f8f7a5b4f"
+                    "example": "636f6b982bd3241eb815c589"
                   },
                   "category": {
                     "type": "string",
-                    "example": "635b7758789621745f5177f0"
+                    "example": "636f6e5878bbaaf252feb17b"
                   },
                   "attributeValues": {
                     "type": "string",
-                    "example": "{\"635b7d478802fbf3da1fb07a\":\"ssssss\"}"
+                    "example": "{\"636f6f5c20577a8a08c2f1a5\":\"jonny.fox@factorymind.com\"}"
                   },
                   "artist": {
                     "type": "string",
@@ -1369,15 +1364,15 @@
                   },
                   "user": {
                     "type": "string",
-                    "example": "635b766fbd24f93f8f7a5b4f"
+                    "example": "636f6b982bd3241eb815c589"
                   },
                   "category": {
                     "type": "string",
-                    "example": "635b7758789621745f5177f0"
+                    "example": "636f6e5878bbaaf252feb17b"
                   },
                   "attributeValues": {
                     "type": "string",
-                    "example": "{\"635b7d478802fbf3da1fb07a\":\"ssssss\"}"
+                    "example": "{\"636f6f5c20577a8a08c2f1a5\":\"aaa@gmail.com\"}"
                   },
                   "artist": {
                     "type": "string",
@@ -1394,7 +1389,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "example": "635b8f36a4b8bf1281ca47ea"
+                    "example": "636f72b848770c0f18cce9f3"
                   }
                 }
               }
