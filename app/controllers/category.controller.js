@@ -82,17 +82,41 @@ exports.updateCategory = (req, res) => {
     });
 };
 
-exports.delCategory = (req, res) => {
+exports.restoreCategory = (req, res) => {
     const category = req.body.id;
-    Category.updateMany({ _id: category }, { deleted: true }, {
+    Category.updateMany({ _id: category }, { deleted: false }, {
         new: false
     }, function (err, category) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-        res.status(200).send({ result: 1, message: 'Category was deleted successfully!' });
+        res.status(200).send({ result: 1, message: 'Category was restored successfully!' });
     });
+};
+
+exports.delCategory = (req, res) => {
+    const category = req.body.id;
+    const permanent = req.body.permanent != undefined ? req.body.permanent : false;
+    if(permanent) {
+        Category.remove({ _id: category }, function (err) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'Category was deleted permanently!' });
+        });
+    } else {
+        Category.updateMany({ _id: category }, { deleted: true }, {
+            new: false
+        }, function (err, category) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'Category was deleted successfully!' });
+        });
+    }
 };
 
 exports.createCategory = (req, res) => {

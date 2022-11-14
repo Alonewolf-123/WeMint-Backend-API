@@ -26,6 +26,15 @@ module.exports = function (app) {
     );
 
     app.post(
+        "/api/admin/category/restore",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            categoryCheck.checkCategoryExist
+        ],
+        controller.restoreCategory
+    );
+
+    app.post(
         "/api/admin/category/update",
         [authJwt.verifyToken, authJwt.isAdmin],
         [

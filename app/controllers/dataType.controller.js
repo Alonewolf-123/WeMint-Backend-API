@@ -91,17 +91,41 @@ exports.updateDataType = (req, res) => {
     });
 };
 
-exports.delDataType = (req, res) => {
+exports.restoreDataType = (req, res) => {
     const dataType = req.body.id;
-    DataType.updateMany({ _id: dataType }, { deleted: true }, {
+    DataType.updateMany({ _id: dataType }, { deleted: false }, {
         new: false
     }, function (err, dataType) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-        res.status(200).send({ result: 1, message: 'DataType was deleted successfully!' });
+        res.status(200).send({ result: 1, message: 'DataType was restored successfully!' });
     });
+};
+
+exports.delDataType = (req, res) => {
+    const dataType = req.body.id;
+    const permanent = req.body.permanent != undefined ? req.body.permanent : false;
+    if(permanent) {
+        DataType.remove({ _id: dataType }, function (err, dataType) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'DataType was deleted permanently!' });
+        });
+    } else {
+        DataType.updateMany({ _id: dataType }, { deleted: true }, {
+            new: false
+        }, function (err, dataType) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'DataType was deleted successfully!' });
+        });
+    }
 };
 
 exports.createDataType = (req, res) => {

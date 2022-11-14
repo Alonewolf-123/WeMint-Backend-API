@@ -65,17 +65,41 @@ exports.updateAttribute = (req, res) => {
     });
 };
 
-exports.delAttribute = (req, res) => {
+exports.restoreAttribute = (req, res) => {
     const attribute = req.body.id;
-    Attribute.updateMany({ _id: attribute }, { deleted: true }, {
+    Attribute.updateMany({ _id: attribute }, { deleted: false }, {
         new: false
     }, function (err, attribute) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-        res.status(200).send({ result: 1, message: 'Attribute was deleted successfully!' });
+        res.status(200).send({ result: 1, message: 'Attribute was restored successfully!' });
     });
+};
+
+exports.delAttribute = (req, res) => {
+    const attribute = req.body.id;
+    const permanent = req.body.permanent != undefined ? req.body.permanent : false;
+    if(permanent) {
+        Attribute.remove({ _id: attribute }, function (err) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'Attribute was deleted permanently!' });
+        });
+    } else {
+        Attribute.updateMany({ _id: attribute }, { deleted: true }, {
+            new: false
+        }, function (err, attribute) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'Attribute was deleted successfully!' });
+        });
+    }
 };
 
 exports.createAttribute = (req, res) => {

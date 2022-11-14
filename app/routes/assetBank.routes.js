@@ -25,6 +25,15 @@ module.exports = function (app) {
     );
 
     app.post(
+        "/api/admin/assetbank/restore",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            assetBankCheck.checkAssetBankExist
+        ],
+        controller.restoreAssetBank
+    );
+
+    app.post(
         "/api/admin/assetbank/update",
         [authJwt.verifyToken, authJwt.isAdmin],
         controller.updateAssetBank

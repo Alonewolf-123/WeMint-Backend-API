@@ -20,6 +20,15 @@ module.exports = function(app) {
   );
 
   app.post(
+    "/api/admin/user/restore",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    [
+      userCheck.checkUserExist
+    ],
+    controller.restoreUser
+  );
+
+  app.post(
     "/api/admin/user/lockandunlock",
     [authJwt.verifyToken, authJwt.isAdmin],
     [

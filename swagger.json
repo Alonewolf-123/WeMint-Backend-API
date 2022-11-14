@@ -321,7 +321,54 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "635b766fbd24f93f8f7a5b4f"
+                  "id": "635b766fbd24f93f8f7a5b4f",
+                  "permanent": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/user/restore": {
+      "post": {
+        "tags": [
+          "User Management"
+        ],
+        "summary": "Restore User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "636f6b982bd3241eb815c589"
                 }
               }
             }
@@ -528,7 +575,54 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "635b7758789621745f5177f0"
+                  "id": "635b7758789621745f5177f0",
+                  "permanent": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/category/restore": {
+      "post": {
+        "tags": [
+          "Category Management"
+        ],
+        "summary": "Restore Category",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "636f6e5878bbaaf252feb17b"
                 }
               }
             }
@@ -733,7 +827,54 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "635b7772789621745f5177f7"
+                  "id": "635b7772789621745f5177f7",
+                  "permanent": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/datatype/restore": {
+      "post": {
+        "tags": [
+          "DataType Management"
+        ],
+        "summary": "Restore DataType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "636f6d9474f1b9055b73e867"
                 }
               }
             }
@@ -940,7 +1081,54 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "id": "635709b8589a1c6963c5b305"
+                  "id": "635709b8589a1c6963c5b305",
+                  "permanent": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/attribute/restore": {
+      "post": {
+        "tags": [
+          "Attribute Management"
+        ],
+        "summary": "Restore Attribute",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "636f6f5c20577a8a08c2f1a5"
                 }
               }
             }
@@ -1213,7 +1401,56 @@
                 "type": "object",
                 "example": {
                   "id": [
-                    "635b8f36a4b8bf1281ca47ea"
+                    "6372185e977c52733b80a15c"
+                  ],
+                  "permanent": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{accessToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/assetbank/restore": {
+      "post": {
+        "tags": [
+          "AssetBank Management"
+        ],
+        "summary": "Restore AssetBank",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": [
+                    "636f72b848770c0f18cce9f3"
                   ]
                 }
               }

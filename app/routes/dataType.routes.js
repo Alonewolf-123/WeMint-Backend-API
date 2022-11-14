@@ -26,6 +26,15 @@ module.exports = function (app) {
     );
 
     app.post(
+        "/api/admin/datatype/restore",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        [
+            dataTypeCheck.checkDataTypeExist
+        ],
+        controller.restoreDataType
+    );
+
+    app.post(
         "/api/admin/datatype/update",
         [authJwt.verifyToken, authJwt.isAdmin],
         [

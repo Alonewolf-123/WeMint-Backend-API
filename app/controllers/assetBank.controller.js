@@ -102,14 +102,38 @@ exports.allAssetBanks = (req, res) => {
 
 exports.delAssetBank = (req, res) => {
     const assetBank = req.body.id;
-    AssetBank.updateMany({ _id: assetBank }, { deleted: true }, {
+    const permanent = req.body.permanent != undefined ? req.body.permanent : false;
+    if(permanent) {
+        AssetBank.remove({ _id: assetBank }, function(err) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'AssetBank was deleted permanently!' });
+        });
+    } else {
+        AssetBank.updateMany({ _id: assetBank }, { deleted: true }, {
+            new: false
+        }, function (err, assetBank) {
+            if (err) {
+                res.status(500).send({ result: 0, message: err });
+                return;
+            }
+            res.status(200).send({ result: 1, message: 'AssetBank was deleted successfully!' });
+        });
+    }
+};
+
+exports.restoreAssetBank = (req, res) => {
+    const assetBank = req.body.id;
+    AssetBank.updateMany({ _id: assetBank }, { deleted: false }, {
         new: false
     }, function (err, assetBank) {
         if (err) {
             res.status(500).send({ result: 0, message: err });
             return;
         }
-        res.status(200).send({ result: 1, message: 'AssetBank was deleted successfully!' });
+        res.status(200).send({ result: 1, message: 'AssetBank was restored successfully!' });
     });
 };
 

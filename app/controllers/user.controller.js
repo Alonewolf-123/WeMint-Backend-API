@@ -58,17 +58,41 @@ exports.updateUser = (req, res) => {
   });
 };
 
-exports.delUser = (req, res) => {
+exports.restoreUser = (req, res) => {
   const user = req.body.id;
-  User.updateMany({ _id: user }, { deleted: true }, {
+  User.updateMany({ _id: user }, { deleted: false }, {
     new: false
   }, function (err, user) {
     if (err) {
       res.status(500).send({ result: 0, message: err });
       return;
     }
-    res.status(200).send({ result: 1, message: 'User was deleted successfully!' });
+    res.status(200).send({ result: 1, message: 'User was restored successfully!' });
   });
+};
+
+exports.delUser = (req, res) => {
+  const user = req.body.id;
+  const permanent = req.body.permanent != undefined ? req.body.permanent : false;
+  if (permanent) {
+    User.remove({ _id: user }, function (err, user) {
+      if (err) {
+        res.status(500).send({ result: 0, message: err });
+        return;
+      }
+      res.status(200).send({ result: 1, message: 'User was deleted permanently!' });
+    });
+  } else {
+    User.updateMany({ _id: user }, { deleted: true }, {
+      new: false
+    }, function (err, user) {
+      if (err) {
+        res.status(500).send({ result: 0, message: err });
+        return;
+      }
+      res.status(200).send({ result: 1, message: 'User was deleted successfully!' });
+    });
+  }
 };
 
 exports.lockAndUnlockUser = (req, res) => {
