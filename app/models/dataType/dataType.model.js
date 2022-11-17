@@ -9,9 +9,14 @@ const DataType = mongoose.model(
     },
     label: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     value: {
+      type: String,
+      required: true
+    },
+    parameter: {
       type: String,
       required: true
     },

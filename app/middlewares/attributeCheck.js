@@ -27,6 +27,7 @@ checkValidParams = (req, res, next) => {
 
     const category = req.body.category;
     const dataType = req.body.dataType;
+    const attribute = req.body.attribute;
 
     let invalidMessage = "";
 
@@ -38,22 +39,29 @@ checkValidParams = (req, res, next) => {
             invalidMessage = "Category is not valid!";
         }
 
-        // dataType
-        DataType.findOne({
-            _id: dataType
-        }).exec((err, dataType) => {
-
-            if (err || !dataType) {
-                invalidMessage += utils.isEmpty(invalidMessage) ? "DataType is not valid!" : "\n" + "DataType is not valid!";
+        Attribute.find({ category: category, attribute: attribute }).then((attributes) => {
+            if (attributes && attributes.length > 0) {
+                invalidMessage += utils.isEmpty(invalidMessage) ? "Attribute should be unique in same category " : "\n" + "Attribute should be unique in same category ";
             }
+            // dataType
+            DataType.findOne({
+                _id: dataType
+            }).exec((err, dataType) => {
 
-            if (!utils.isEmpty(invalidMessage)) {
-                res.status(400).send({ result: 0, message: invalidMessage });
-                return;
-            }
-            next();
+                if (err || !dataType) {
+                    invalidMessage += utils.isEmpty(invalidMessage) ? "DataType is not valid!" : "\n" + "DataType is not valid!";
+                }
+
+                if (!utils.isEmpty(invalidMessage)) {
+                    res.status(400).send({ result: 0, message: invalidMessage });
+                    return;
+                }
+                next();
+            });
+        }).catch((err) => {
+            res.status(500).send({ result: 0, message: err });
+            return;
         });
-
     });
 };
 

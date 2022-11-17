@@ -44,8 +44,11 @@
                 "example": {
                   "firstName": "First",
                   "lastName": "Last",
-                  "email": "test@gmail.com1",
-                  "password": "test"
+                  "email": "test@gmail.com2",
+                  "password": "test",
+                  "roles": [
+                    "user"
+                  ]
                 }
               }
             }
@@ -971,7 +974,8 @@
                 "example": {
                   "type": "type",
                   "label": "label",
-                  "value": "XihbYS16QS1aMC05Ll8lLV0rQFthLXpBLVowLTkuLV0rXC5bYS16QS1aXXsyLDZ9KSok"
+                  "value": "XihbYS16QS1aMC05Ll8lLV0rQFthLXpBLVowLTkuLV0rXC5bYS16QS1aXXsyLDZ9KSok",
+                  "parameter": "parameter"
                 }
               }
             }
@@ -1351,10 +1355,9 @@
                 "type": "object",
                 "example": {
                   "id": [
-                    "635b8f36a4b8bf1281ca47ea",
-                    "635b8f36a4b8bf1281ca47ea"
+                    "637611026ef70a3b05e4c324"
                   ],
-                  "user": "635b766fbd24f93f8f7a5b4f"
+                  "user": "63760dd0683edf9a2466d0d6"
                 }
               }
             }
@@ -1515,7 +1518,7 @@
                   },
                   "user": {
                     "type": "string",
-                    "example": "636f6b982bd3241eb815c589"
+                    "example": "63760dd0683edf9a2466d0d6"
                   },
                   "category": {
                     "type": "string",
@@ -1601,7 +1604,7 @@
                   },
                   "user": {
                     "type": "string",
-                    "example": "636f6b982bd3241eb815c589"
+                    "example": "63760dd0683edf9a2466d0d6"
                   },
                   "category": {
                     "type": "string",
@@ -1626,7 +1629,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "example": "636f72b848770c0f18cce9f3"
+                    "example": "637611026ef70a3b05e4c324"
                   }
                 }
               }

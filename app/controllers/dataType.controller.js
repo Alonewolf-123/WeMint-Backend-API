@@ -72,6 +72,7 @@ exports.updateDataType = (req, res) => {
     const type = req.body.type;
     const label = req.body.label;
     const value = req.body.value;
+    const parameter = req.body.parameter;
 
     if(!utils.isEmpty(value)) {
         if(!utils.isBase64String(value)) {
@@ -80,7 +81,7 @@ exports.updateDataType = (req, res) => {
         }
     }
 
-    DataType.findOneAndUpdate({ _id: dataType }, { type: type, label: label, value }, {
+    DataType.findOneAndUpdate({ _id: dataType }, { type: type, label: label, value: value, parameter: parameter }, {
         new: false
     }, function (err, dataType) {
         if (err) {
@@ -137,7 +138,8 @@ exports.createDataType = (req, res) => {
     const dataType = new DataType({
         type: req.body.type,
         label: req.body.label,
-        value: req.body.value
+        value: req.body.value,
+        parameter: req.body.parameter
     });
 
     dataType.save((err, dataType) => {

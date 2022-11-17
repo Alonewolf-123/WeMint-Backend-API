@@ -3,6 +3,7 @@ const path = require('path');
 const db = require("../models");
 const Attribute = require('../models/attribute/attribute.model');
 const Category = require('../models/category/category.model');
+const Role = require('../models/user/role.model');
 const User = require('../models/user/user.model');
 const utils = require('../utils/utils');
 const AssetBank = db.assetBank;
@@ -103,8 +104,8 @@ exports.allAssetBanks = (req, res) => {
 exports.delAssetBank = (req, res) => {
     const assetBank = req.body.id;
     const permanent = req.body.permanent != undefined ? req.body.permanent : false;
-    if(permanent) {
-        AssetBank.remove({ _id: assetBank }, function(err) {
+    if (permanent) {
+        AssetBank.remove({ _id: assetBank }, function (err) {
             if (err) {
                 res.status(500).send({ result: 0, message: err });
                 return;
@@ -149,17 +150,37 @@ exports.changeUser = (req, res) => {
             return;
         }
 
-        const assetBank = req.body.id;
-        AssetBank.updateMany({ _id: assetBank }, { user: user }, {
-            new: false
-        }, function (err, assetBank) {
-            if (err) {
-                res.status(500).send({ result: 0, message: err });
-                return;
+        Role.find(
+            {
+                _id: { $in: userItem.roles }
+            },
+            (err, roles) => {
+                if (err) {
+                    res.status(500).send({ result: 0, message: err });
+                    return;
+                }
+                let bCorrectRole = false;
+                for (let i = 0; i < roles.length; i++) {
+                    if (roles[i].name === "user") {
+                        bCorrectRole = true;
+                    }
+                }
+                if (!bCorrectRole) {
+                    res.status(400).send({ result: 0, message: "User should be enduser!" });
+                    return;
+                }
+                const assetBank = req.body.id;
+                AssetBank.updateMany({ _id: assetBank }, { user: user }, {
+                    new: false
+                }, function (err, assetBank) {
+                    if (err) {
+                        res.status(500).send({ result: 0, message: err });
+                        return;
+                    }
+                    res.status(200).send({ result: 1, message: 'AssetBank User was updated successfully!' });
+                });
             }
-            res.status(200).send({ result: 1, message: 'AssetBank User was updated successfully!' });
-        });
-
+        );
     });
 };
 
@@ -205,72 +226,98 @@ exports.createAssetBank = (req, res) => {
                     res.status(400).send({ result: 0, message: invalidMessage });
                     return;
                 }
-                let attributeValues;
-                try {
-                    attributeValues = JSON.parse(req.body.attributeValues);
-                } catch (err) {
-                    console.log(err);
-                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                    return;
-                }
-                let attributeIds = Object.keys(attributeValues);
-                if (attributeIds.length == 0) {
-                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                    return;
-                } else {
-                    Attribute.find({ category: category }).where('_id').in(attributeIds).populate('dataType').then((attributes) => {
-                        if (attributes.length == attributeIds.length) {
-                            let attributeCheckMessage = '';
-                            try {
-                                attributes.forEach(element => {
-                                    let regEx = new RegExp(Buffer.from(element.dataType.value, 'base64').toString());
-                                    let dataTypeValue = regEx.test(attributeValues[element['_id']]);
-                                    if (!dataTypeValue) {
-                                        attributeCheckMessage = utils.isEmpty(attributeCheckMessage) ? 'Attribute ' + element.attribute + ' is invalid.' : attributeCheckMessage + "\n" + 'Attribute ' + element.attribute + ' is invalid.'
+
+                Role.find(
+                    {
+                        _id: { $in: userItem.roles }
+                    },
+                    (err, roles) => {
+                        if (err) {
+                            res.status(500).send({ result: 0, message: err });
+                            return;
+                        }
+                        let bCorrectRole = false;
+                        for (let i = 0; i < roles.length; i++) {
+                            if (roles[i].name === "user") {
+                                bCorrectRole = true;
+                            }
+                        }
+                        if (!bCorrectRole) {
+                            invalidMessage += utils.isEmpty(invalidMessage) ? "User should be enduser" : "\n" + "User should be enduser";
+                        }
+                        if (!utils.isEmpty(invalidMessage)) {
+                            res.status(400).send({ result: 0, message: invalidMessage });
+                            return;
+                        }
+                        let attributeValues;
+                        try {
+                            attributeValues = JSON.parse(req.body.attributeValues);
+                        } catch (err) {
+                            console.log(err);
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            return;
+                        }
+                        let attributeIds = Object.keys(attributeValues);
+                        if (attributeIds.length == 0) {
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            return;
+                        } else {
+                            Attribute.find({ category: category }).where('_id').in(attributeIds).populate('dataType').then((attributes) => {
+                                if (attributes.length == attributeIds.length) {
+                                    let attributeCheckMessage = '';
+                                    try {
+                                        attributes.forEach(element => {
+                                            let regEx = new RegExp(Buffer.from(element.dataType.value, 'base64').toString());
+                                            let dataTypeValue = regEx.test(attributeValues[element['_id']]);
+                                            if (!dataTypeValue) {
+                                                attributeCheckMessage = utils.isEmpty(attributeCheckMessage) ? 'Attribute ' + element.attribute + ' is invalid.' : attributeCheckMessage + "\n" + 'Attribute ' + element.attribute + ' is invalid.'
+                                            }
+                                        });
+                                    } catch (error) {
+                                        console.log(error);
+                                        res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                        return;
                                     }
-                                });
-                            } catch (error) {
-                                console.log(error);
-                                res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                                return;
-                            }
-                            if (!utils.isEmpty(attributeCheckMessage)) {
-                                res.status(400).send({ result: 0, message: attributeCheckMessage });
-                                return;
-                            }
+                                    if (!utils.isEmpty(attributeCheckMessage)) {
+                                        res.status(400).send({ result: 0, message: attributeCheckMessage });
+                                        return;
+                                    }
 
-                            const assetBank = new AssetBank({
-                                asset: req.file.filename,
-                                name: req.body.name,
-                                externalLink: req.body.externalLink,
-                                description: req.body.description,
-                                user: req.body.user,
-                                category: req.body.category,
-                                attributeValues: attributeValues,
-                                artist: req.body.artist,
-                                supply: req.body.supply,
-                                blockchain: req.body.blockchain,
-                            });
+                                    const assetBank = new AssetBank({
+                                        asset: req.file.filename,
+                                        name: req.body.name,
+                                        externalLink: req.body.externalLink,
+                                        description: req.body.description,
+                                        user: req.body.user,
+                                        category: req.body.category,
+                                        attributeValues: attributeValues,
+                                        artist: req.body.artist,
+                                        supply: req.body.supply,
+                                        blockchain: req.body.blockchain,
+                                    });
 
-                            assetBank.save((err, result) => {
-                                if (err) {
-                                    res.status(500).send({ result: 0, message: err.message });
+                                    assetBank.save((err, result) => {
+                                        if (err) {
+                                            res.status(500).send({ result: 0, message: err.message });
+                                            return;
+                                        }
+
+                                        res.send({ result: 1, message: "AssetBank was created successfully!", data: result });
+                                    });
+                                } else {
+                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
                                     return;
                                 }
-
-                                res.send({ result: 1, message: "AssetBank was created successfully!", data: result });
+                            }).catch((err) => {
+                                if (err) {
+                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                    return;
+                                }
                             });
-                        } else {
-                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                            return;
                         }
-                    }).catch((err) => {
-                        if (err) {
-                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                            return;
-                        }
-                    });
-                }
+                    }
+                );
+
             });
 
         });
@@ -322,80 +369,100 @@ exports.updateAssetBank = (req, res) => {
                             invalidMessage += utils.isEmpty(invalidMessage) ? "User is not valid!" : "\n" + "User is not valid!";
                         }
 
-                        if (!utils.isEmpty(invalidMessage)) {
-                            res.status(400).send({ result: 0, message: invalidMessage });
-                            return;
-                        }
-                        let attributeValues;
-                        try {
-                            attributeValues = JSON.parse(req.body.attributeValues);
-                        } catch (err) {
-                            console.log(err);
-                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                            return;
-                        }
-                        let attributeIds = Object.keys(attributeValues);
-                        if (attributeIds.length == 0) {
-                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                            return;
-                        } else {
-                            Attribute.find({ category: category }).where('_id').in(attributeIds).populate('dataType').then((attributes) => {
-                                if (attributes.length == attributeIds.length) {
-                                    let attributeCheckMessage = '';
-                                    try {
-                                        attributes.forEach(element => {
-                                            let regEx = new RegExp(Buffer.from(element.dataType.value, 'base64').toString());
-                                            let dataTypeValue = regEx.test(attributeValues[element['_id']]);
-                                            if (!dataTypeValue) {
-                                                attributeCheckMessage = utils.isEmpty(attributeCheckMessage) ? 'Attribute ' + element.attribute + ' is invalid.' : attributeCheckMessage + "\n" + 'Attribute ' + element.attribute + ' is invalid.'
+                        Role.find(
+                            {
+                                _id: { $in: userItem.roles }
+                            },
+                            (err, roles) => {
+                                if (err) {
+                                    res.status(500).send({ result: 0, message: err });
+                                    return;
+                                }
+                                let bCorrectRole = false;
+                                for (let i = 0; i < roles.length; i++) {
+                                    if (roles[i].name === "user") {
+                                        bCorrectRole = true;
+                                    }
+                                }
+                                if (!bCorrectRole) {
+                                    invalidMessage += utils.isEmpty(invalidMessage) ? "User should be enduser" : "\n" + "User should be enduser";
+                                }
+                                if (!utils.isEmpty(invalidMessage)) {
+                                    res.status(400).send({ result: 0, message: invalidMessage });
+                                    return;
+                                }
+                                let attributeValues;
+                                try {
+                                    attributeValues = JSON.parse(req.body.attributeValues);
+                                } catch (err) {
+                                    console.log(err);
+                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                    return;
+                                }
+                                let attributeIds = Object.keys(attributeValues);
+                                if (attributeIds.length == 0) {
+                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                    return;
+                                } else {
+                                    Attribute.find({ category: category }).where('_id').in(attributeIds).populate('dataType').then((attributes) => {
+                                        if (attributes.length == attributeIds.length) {
+                                            let attributeCheckMessage = '';
+                                            try {
+                                                attributes.forEach(element => {
+                                                    let regEx = new RegExp(Buffer.from(element.dataType.value, 'base64').toString());
+                                                    let dataTypeValue = regEx.test(attributeValues[element['_id']]);
+                                                    if (!dataTypeValue) {
+                                                        attributeCheckMessage = utils.isEmpty(attributeCheckMessage) ? 'Attribute ' + element.attribute + ' is invalid.' : attributeCheckMessage + "\n" + 'Attribute ' + element.attribute + ' is invalid.'
+                                                    }
+                                                });
+                                            } catch (error) {
+                                                console.log(error);
+                                                res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                                return;
                                             }
-                                        });
-                                    } catch (error) {
-                                        console.log(error);
-                                        res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                                        return;
-                                    }
-                                    if (!utils.isEmpty(attributeCheckMessage)) {
-                                        res.status(400).send({ result: 0, message: attributeCheckMessage });
-                                        return;
-                                    }
+                                            if (!utils.isEmpty(attributeCheckMessage)) {
+                                                res.status(400).send({ result: 0, message: attributeCheckMessage });
+                                                return;
+                                            }
 
-                                    let update = {
-                                        name: req.body.name,
-                                        externalLink: req.body.externalLink,
-                                        description: req.body.description,
-                                        user: req.body.user,
-                                        category: req.body.category,
-                                        attributeValues: attributeValues,
-                                        artist: req.body.artist,
-                                        supply: req.body.supply,
-                                        blockchain: req.body.blockchain,
-                                    };
+                                            let update = {
+                                                name: req.body.name,
+                                                externalLink: req.body.externalLink,
+                                                description: req.body.description,
+                                                user: req.body.user,
+                                                category: req.body.category,
+                                                attributeValues: attributeValues,
+                                                artist: req.body.artist,
+                                                supply: req.body.supply,
+                                                blockchain: req.body.blockchain,
+                                            };
 
-                                    if (req.file != undefined && req.file.filename == undefined) {
-                                        update['asset'] = req.file.filename;
-                                    }
+                                            if (req.file != undefined && req.file.filename == undefined) {
+                                                update['asset'] = req.file.filename;
+                                            }
 
-                                    AssetBank.findOneAndUpdate({ _id: assetBank }, update, {
-                                        new: false
-                                    }, function (err, data) {
-                                        if (err) {
-                                            res.status(500).send({ result: 0, message: err });
+                                            AssetBank.findOneAndUpdate({ _id: assetBank }, update, {
+                                                new: false
+                                            }, function (err, data) {
+                                                if (err) {
+                                                    res.status(500).send({ result: 0, message: err });
+                                                    return;
+                                                }
+                                                res.status(200).send({ result: 1, message: 'AssetBank was updated successfully!' });
+                                            });
+                                        } else {
+                                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
                                             return;
                                         }
-                                        res.status(200).send({ result: 1, message: 'AssetBank was updated successfully!' });
+                                    }).catch((err) => {
+                                        if (err) {
+                                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                            return;
+                                        }
                                     });
-                                } else {
-                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                                    return;
                                 }
-                            }).catch((err) => {
-                                if (err) {
-                                    res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
-                                    return;
-                                }
-                            });
-                        }
+                            }
+                        );
 
                     });
 
