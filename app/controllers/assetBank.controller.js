@@ -254,12 +254,12 @@ exports.createAssetBank = (req, res) => {
                             attributeValues = JSON.parse(req.body.attributeValues);
                         } catch (err) {
                             console.log(err);
-                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid(invalid json)" });
                             return;
                         }
                         let attributeIds = Object.keys(attributeValues);
                         if (attributeIds.length == 0) {
-                            res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                            res.status(400).send({ result: 0, message: "Attribute Values are not valid(need to include all attributes)" });
                             return;
                         } else {
                             Attribute.find({ category: category }).where('_id').in(attributeIds).populate('dataType').then((attributes) => {
@@ -274,8 +274,7 @@ exports.createAssetBank = (req, res) => {
                                             }
                                         });
                                     } catch (error) {
-                                        console.log(error);
-                                        res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
+                                        res.status(400).send({ result: 0, message: "Attribute Values are not valid", error: error });
                                         return;
                                     }
                                     if (!utils.isEmpty(attributeCheckMessage)) {
