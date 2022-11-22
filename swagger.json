@@ -300,6 +300,14 @@
               "type": "integer"
             },
             "example": "5"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "admin"
           }
         ],
         "responses": {

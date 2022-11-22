@@ -3,6 +3,8 @@ const utils = require("../utils/utils");
 const User = db.user;
 
 const bcrypt = require("bcryptjs");
+const { mongo } = require("mongoose");
+const Role = require("../models/user/role.model");
 
 exports.allUsers = (req, res) => {
 
@@ -20,22 +22,51 @@ exports.allUsers = (req, res) => {
     limit: parseInt(req.query.limit, 10) || 10
   };
   const search = req.query.search ? req.query.search : '';
-  const query = !utils.isEmpty(search) ? { $and: [{ deleted: deleted }, { $or: [{ firstName: { '$regex': search, '$options': "i" } }, { lastName: { '$regex': search, '$options': "i" } }, { email: { '$regex': search, '$options': "i" } }] }] } : { deleted: false };
-  let cusor = User.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit);
-  cusor.count().then((count) => {
-    const totalPageCount = Math.floor(count / pageOptions.limit) + 1;
-    User.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit).populate("roles").then((users) => {
-      res.status(200).send({ result: 1, data: users, pageCount: totalPageCount, page: pageOptions.page, pageLimit: pageOptions.limit });
-    }).catch((err) => {
+  const queryList = [{ deleted: deleted }];
+  if (!utils.isEmpty(search)) {
+    queryList.push({ $or: [{ firstName: { '$regex': search, '$options': "i" } }, { lastName: { '$regex': search, '$options': "i" } }, { email: { '$regex': search, '$options': "i" } }] });
+  }
+  const role = req.query.role;
+  Role.find(
+    {
+      name: role,
+    },
+    (err, roles) => {
       if (err) {
         res.status(500).send({ result: 0, message: err });
         return;
       }
-    });
-  }).catch((err) => {
-    res.status(500).send({ result: 0, message: err });
-  });
+      if (roles.length > 0) {
+        let roleObjectIds = [];
+        roles.forEach(element => {
+          roleObjectIds.push(element['_id']);
+        });
+        queryList.push({ roles: { $in: roleObjectIds } });
+      } else {
+        if (role) {
+          res.status(200).send({ result: 1, data: [] });
+          return;
+        }
+      }
 
+      const query = { $and: queryList };
+      let cusor = User.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit);
+      cusor.count().then((count) => {
+        const totalPageCount = Math.floor(count / pageOptions.limit) + 1;
+        User.find(query).skip(pageOptions.page * pageOptions.limit).limit(pageOptions.limit).populate("roles").then((users) => {
+          res.status(200).send({ result: 1, data: users, pageCount: totalPageCount, page: pageOptions.page, pageLimit: pageOptions.limit });
+        }).catch((err) => {
+          if (err) {
+            res.status(500).send({ result: 0, message: err });
+            return;
+          }
+        });
+      }).catch((err) => {
+        res.status(500).send({ result: 0, message: err });
+      });
+
+    }
+  );
 };
 
 exports.updateUser = (req, res) => {
