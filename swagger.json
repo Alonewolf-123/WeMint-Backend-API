@@ -1548,6 +1548,10 @@
                   "blockchain": {
                     "type": "string",
                     "example": "blockchain"
+                  },
+                  "preview": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
@@ -1638,6 +1642,10 @@
                   "id": {
                     "type": "string",
                     "example": "637611026ef70a3b05e4c324"
+                  },
+                  "preview": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }

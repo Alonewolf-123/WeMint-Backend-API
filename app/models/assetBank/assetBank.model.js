@@ -7,6 +7,10 @@ const AssetBank = mongoose.model(
             type: String,
             required: true
         },
+        preview: {
+            type: String,
+            required: true
+        },
         name: {
             type: String,
             required: true

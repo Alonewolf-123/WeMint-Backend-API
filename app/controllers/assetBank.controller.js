@@ -25,11 +25,11 @@ var upload = multer({
     fileFilter: function (_req, file, cb) {
         checkFileType(file, cb);
     }
-}).single('asset');
+}).fields([{ name: 'asset', maxCount: 1 }, { name: 'preview', maxCount: 1 }]);
 
 function checkFileType(file, cb) {
     // Allowed ext
-    const filetypes = /jpg|jpeg|png|gif|svg|mp4|wabm|mp3|wav|ogg|glb|gltf|json|gif|json/;
+    const filetypes = /jpg|jpeg|png|gif|svg|mp4|wabm|mp3|wav|ogg|glb|gltf|gif/;
     // Check ext
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     // Check mime
@@ -41,7 +41,7 @@ function checkFileType(file, cb) {
     if (mimetype && extname) {
         return cb(null, true);
     } else {
-        cb('Invalid Asset');
+        cb('Invalid File Type');
     }
 }
 
@@ -186,7 +186,6 @@ exports.changeUser = (req, res) => {
 
 exports.createAssetBank = (req, res) => {
     upload(req, res, function (err) {
-
         if (err instanceof multer.MulterError) {
             res.status(500).send({ result: 0, message: err.message });
             return;
@@ -195,8 +194,20 @@ exports.createAssetBank = (req, res) => {
             return;
         }
 
-        if (req.file == undefined || req.file.filename == undefined) {
-            res.status(500).send({ result: 0, message: 'Invalid Asset' });
+        if (req.files != undefined) {
+            if (req.files.asset == undefined || req.files.asset.length == 0) {
+                res.status(500).send({ result: 0, message: 'Invalid Asset' });
+                return;
+            } else if (req.files.preview == undefined || req.files.preview.length == 0) {
+                res.status(500).send({ result: 0, message: 'Invalid Preview' });
+                return;
+            }
+        } else {
+            res.status(500).send({ result: 0, message: 'Invalid Asset and Preview' });
+            return;
+        }
+        if (req.files.preview[0].mimetype.indexOf('image/') == -1) {
+            res.status(500).send({ result: 0, message: 'Invalid Preview' });
             return;
         }
 
@@ -283,7 +294,8 @@ exports.createAssetBank = (req, res) => {
                                     }
 
                                     const assetBank = new AssetBank({
-                                        asset: req.file.filename,
+                                        asset: req.files.asset[0].filename,
+                                        preview: req.files.preview[0].filename,
                                         name: req.body.name,
                                         externalLink: req.body.externalLink,
                                         description: req.body.description,
@@ -333,6 +345,11 @@ exports.updateAssetBank = (req, res) => {
             return;
         } else if (err) {
             res.status(500).send({ result: 0, message: err });
+            return;
+        }
+
+        if (req.files != undefined && req.files.preview != undefined && req.files.preview[0].mimetype.indexOf('image/') == -1) {
+            res.status(500).send({ result: 0, message: 'Invalid Preview' });
             return;
         }
 
@@ -436,8 +453,12 @@ exports.updateAssetBank = (req, res) => {
                                                 blockchain: req.body.blockchain,
                                             };
 
-                                            if (req.file != undefined && req.file.filename == undefined) {
-                                                update['asset'] = req.file.filename;
+                                            if (req.files != undefined && req.files.asset != undefined && req.files.asset.length > 0) {
+                                                update['asset'] = req.files.asset[0].filename;
+                                            }
+
+                                            if (req.files != undefined && req.files.preview != undefined && req.files.preview.length > 0) {
+                                                update['preview'] = req.files.preview[0].filename;
                                             }
 
                                             AssetBank.findOneAndUpdate({ _id: assetBank }, update, {
