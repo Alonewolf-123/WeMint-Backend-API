@@ -57,6 +57,8 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(express.static(__dirname + '/public'));
+
 // routes
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
