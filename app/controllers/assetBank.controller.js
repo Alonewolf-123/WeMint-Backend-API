@@ -9,7 +9,7 @@ const utils = require('../utils/utils');
 const AssetBank = db.assetBank;
 
 const storage = multer.diskStorage({
-    destination: './public/uploads',
+    destination: './public/assets',
     filename: function (_req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
