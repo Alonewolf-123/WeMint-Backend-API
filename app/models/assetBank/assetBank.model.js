@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const AssetBank = mongoose.model(
     "AssetBank",
     new mongoose.Schema({
+        tokenId: {
+          type: Number,
+          required: true,
+        },
         asset: {
             type: String,
             required: true

@@ -48,4 +48,9 @@ module.exports = function (app) {
         controller.changeUser
     );
 
+    app.get(
+        "/jsonurl/:tokenId",
+        controller.jsonUrl
+    );
+
 };

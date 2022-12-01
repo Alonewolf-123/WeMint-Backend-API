@@ -7,6 +7,8 @@ const Role = require('../models/user/role.model');
 const User = require('../models/user/user.model');
 const utils = require('../utils/utils');
 const AssetBank = db.assetBank;
+const dotenv = require('dotenv');
+dotenv.config();
 
 const storage = multer.diskStorage({
     destination: './public/assets',
@@ -184,6 +186,46 @@ exports.changeUser = (req, res) => {
     });
 };
 
+exports.jsonUrl = (req, res) => {
+    let tokenId = req.params.tokenId;
+    AssetBank.findOne({
+        tokenId: tokenId
+    }).populate("category").exec((err, assetBank) => {
+
+        if (err || !assetBank) {
+            res.status(400).send({ result: 0, message: "TokenId is invalid" });
+            return;
+        }
+        let attributes = [];
+        attributes.push({
+            "trait_type": "Category",
+            "value": assetBank.category.name
+        });
+        let attributesIds = Object.keys(assetBank.attributeValues);
+        let metaData = {
+            "description": assetBank.description,
+            "external_url": assetBank.externalLink,
+            "image": process.env.SITE_ORIGIN + "/assets/" + assetBank.asset,
+            "name": assetBank.name
+        };
+        Attribute.find({ _id: attributesIds }, function (err, values) {
+            if (err) {
+                res.status(400).send({ result: 0, message: "TokenId is invalid" });
+                return;
+            }
+            values.forEach(element => {
+                attributes.push({
+                    "trait_type": element.attribute,
+                    "value": assetBank.attributeValues[element['_id']]
+                });
+            });
+            metaData['attributes'] = attributes;
+            res.send(metaData);
+        });
+    });
+
+};
+
 exports.createAssetBank = (req, res) => {
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
@@ -293,28 +335,44 @@ exports.createAssetBank = (req, res) => {
                                         return;
                                     }
 
-                                    const assetBank = new AssetBank({
-                                        asset: req.files.asset[0].filename,
-                                        preview: req.files.preview[0].filename,
-                                        name: req.body.name,
-                                        externalLink: req.body.externalLink,
-                                        description: req.body.description,
-                                        user: req.body.user,
-                                        category: req.body.category,
-                                        attributeValues: attributeValues,
-                                        artist: req.body.artist,
-                                        supply: req.body.supply,
-                                        blockchain: req.body.blockchain,
-                                    });
+                                    AssetBank.findOne()
+                                        .find({})
+                                        .select("tokenId")
+                                        .sort({ "tokenId": -1 })
+                                        .limit(1)
+                                        .exec(function (err, doc) {
+                                            var max = 0;
+                                            try {
+                                                max = doc[0].tokenId;
+                                            } catch (error) {
 
-                                    assetBank.save((err, result) => {
-                                        if (err) {
-                                            res.status(500).send({ result: 0, message: err.message });
-                                            return;
+                                            }
+                                            const assetBank = new AssetBank({
+                                                tokenId: max == undefined ? 0 : max + 1,
+                                                asset: req.files.asset[0].filename,
+                                                preview: req.files.preview[0].filename,
+                                                name: req.body.name,
+                                                externalLink: req.body.externalLink,
+                                                description: req.body.description,
+                                                user: req.body.user,
+                                                category: req.body.category,
+                                                attributeValues: attributeValues,
+                                                artist: req.body.artist,
+                                                supply: req.body.supply,
+                                                blockchain: req.body.blockchain,
+                                            });
+
+                                            assetBank.save((err, result) => {
+                                                if (err) {
+                                                    res.status(500).send({ result: 0, message: err.message });
+                                                    return;
+                                                }
+
+                                                res.send({ result: 1, message: "AssetBank was created successfully!", data: result });
+                                            });
                                         }
+                                        );
 
-                                        res.send({ result: 1, message: "AssetBank was created successfully!", data: result });
-                                    });
                                 } else {
                                     res.status(400).send({ result: 0, message: "Attribute Values are not valid" });
                                     return;
