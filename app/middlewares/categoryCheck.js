@@ -24,15 +24,19 @@ checkCategoryExist = (req, res, next) => {
 };
 
 checkCategoryCanDelete = (req, res, next) => {
+    console.log(req);
     const category = req.body.id;
     const query = { category: category, deleted: false };
     Attribute.find(query).then((attributes) => {
+        console.log(attributes);
         if (attributes && attributes.length > 0) {
             res.status(400).send({ result: 0, message: "This category can't be deleted" });
         } else {
             AssetBank.find(query).then((assetBanks) => {
                 if (assetBanks && assetBanks.length > 0) {
                     res.status(400).send({ result: 0, message: "This category can't be deleted" });
+                } else {
+                    next();
                 }
             }).catch((err) => {
                 next();
@@ -43,6 +47,8 @@ checkCategoryCanDelete = (req, res, next) => {
         AssetBank.find(query).then((assetBanks) => {
             if (assetBanks && assetBanks.length > 0) {
                 res.status(400).send({ result: 0, message: "This category can't be deleted" });
+            } else {
+                next();
             }
         }).catch((err) => {
             next();

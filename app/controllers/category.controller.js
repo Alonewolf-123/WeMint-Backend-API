@@ -98,6 +98,7 @@ exports.restoreCategory = (req, res) => {
 exports.delCategory = (req, res) => {
     const category = req.body.id;
     const permanent = req.body.permanent != undefined ? req.body.permanent : false;
+    console.log(req.body);
     if(permanent) {
         Category.remove({ _id: category }, function (err) {
             if (err) {

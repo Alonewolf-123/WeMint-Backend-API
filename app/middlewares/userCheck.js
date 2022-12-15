@@ -75,6 +75,8 @@ checkUserCanDelete = (req, res, next) => {
   AssetBank.find(query).then((assetBanks) => {
     if (assetBanks && assetBanks.length > 0) {
       res.status(400).send({ result: 0, message: "This user can't be deleted" });
+    } else {
+      next();
     }
   }).catch((err) => {
     next();
