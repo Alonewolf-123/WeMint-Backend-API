@@ -60,6 +60,7 @@ app.use(function (req, res, next) {
 app.use(express.static(__dirname + '/public'));
 
 // routes
+require("./app/routes/salesforce.routes")(app);
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 require("./app/routes/category.routes")(app);
